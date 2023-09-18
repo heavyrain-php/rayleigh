@@ -6,6 +6,7 @@
 
 namespace Rayleigh\Tests\Config;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -24,12 +25,34 @@ final class ArrayConfigTest extends TestCase
     }
 
     #[Test]
+    public function testGetStringHasUndefinedKey(): void
+    {
+        $config = new ArrayConfig([
+            'foo' => [],
+        ]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Undefined config key provided key=undefined');
+        $config->getString('undefined');
+    }
+
+    #[Test]
+    public function testGetStringHasInvalidValue(): void
+    {
+        $config = new ArrayConfig([
+            'foo' => [],
+        ]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid config value type provided key=foo value=array');
+        $config->getString('foo');
+    }
+
+    #[Test]
     public function testGetStringArray(): void
     {
         $config = new ArrayConfig([
-            'foo' => 'bar,baz',
+            'foo' => 'bar,,baz',
         ]);
-        $this->assertSame(['bar', 'baz'], $config->getStringArray('foo'));
+        $this->assertSame(['bar', '', 'baz'], $config->getStringArray('foo'));
     }
 
     #[Test]
@@ -42,6 +65,17 @@ final class ArrayConfigTest extends TestCase
     }
 
     #[Test]
+    public function testGetIntegerHasInvalidValue(): void
+    {
+        $config = new ArrayConfig([
+            'foo' => '0x0f',
+        ]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid config value provided key=foo value=0x0f');
+        $config->getInteger('foo');
+    }
+
+    #[Test]
     public function testGetIntegerArray(): void
     {
         $config = new ArrayConfig([
@@ -51,11 +85,35 @@ final class ArrayConfigTest extends TestCase
     }
 
     #[Test]
+    public function testGetIntegerArrayHasInvalidValue(): void
+    {
+        $config = new ArrayConfig([
+            'foo' => '0,1,20000,0x0aaf',
+        ]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid config value provided key=foo value=0x0aaf');
+        $config->getIntegerArray('foo');
+    }
+
+    #[Test]
     public function testGetBoolean(): void
     {
         $config = new ArrayConfig([
             'foo' => 'true',
+            'bar' => 'false',
         ]);
         $this->assertSame(true, $config->getBoolean('foo'));
+        $this->assertSame(false, $config->getBoolean('bar'));
+    }
+
+    #[Test]
+    public function testGetBooleanHasInvalidValue(): void
+    {
+        $config = new ArrayConfig([
+            'foo' => '?',
+        ]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid config value provided key=foo value=?');
+        $config->getBoolean('foo');
     }
 }

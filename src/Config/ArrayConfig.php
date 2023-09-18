@@ -18,9 +18,6 @@ final readonly class ArrayConfig implements Config
     public function getString(string $key): string
     {
         $value = $this->getValue($key);
-        if (!\is_string($value)) {
-            throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $value);
-        }
         return \strval($value);
     }
 
@@ -30,9 +27,6 @@ final readonly class ArrayConfig implements Config
         $valuesRaw = \explode(',', $value);
         $values = [];
         foreach ($valuesRaw as $v) {
-            if (!\is_string($v)) {
-                throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $v);
-            }
             $values[] = \strval($v);
         }
         return $values;
@@ -41,7 +35,7 @@ final readonly class ArrayConfig implements Config
     public function getInteger(string $key): int
     {
         $value = $this->getValue($key);
-        if (false === \preg_match('/^[0-9]+$/', $value)) {
+        if (1 !== \preg_match('/^[0-9]+$/', $value)) {
             throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $value);
         }
         return \intval($value);
@@ -53,7 +47,7 @@ final readonly class ArrayConfig implements Config
         $valuesRaw = \explode(',', $value);
         $values = [];
         foreach ($valuesRaw as $v) {
-            if (false === \preg_match('/^[0-9]+$/', $v)) {
+            if (1 !== \preg_match('/^[0-9]+$/', $v)) {
                 throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $v);
             }
             $values[] = \intval($v);
@@ -64,10 +58,15 @@ final readonly class ArrayConfig implements Config
     public function getBoolean(string $key): bool
     {
         $value = $this->getValue($key);
-        if ($value !== 'true' && $value !== 'false') {
-            throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $value);
+
+        if ($value === 'true') {
+            return true;
         }
-        return \boolval($value);
+        if ($value === 'false') {
+            return false;
+        }
+
+        throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $value);
     }
 
     private function getValue(string $key): mixed
@@ -75,6 +74,10 @@ final readonly class ArrayConfig implements Config
         if (!\array_key_exists($key, $this->config)) {
             throw new \InvalidArgumentException('Undefined config key provided key=' . $key);
         }
-        return $this->config[$key];
+        $value = $this->config[$key];
+        if (!\is_string($value)) {
+            throw new \InvalidArgumentException('Invalid config value type provided key=' . $key . ' value=' . \gettype($value));
+        }
+        return $value;
     }
 }
