@@ -35,7 +35,7 @@ final readonly class ArrayConfig implements Config
     public function getInteger(string $key): int
     {
         $value = $this->getValue($key);
-        if (1 !== \preg_match('/^[0-9]+$/', $value)) {
+        if (1 !== \preg_match('/^([0-9]|[1-9]+[0-9]*)$/', $value)) {
             throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $value);
         }
         return \intval($value);
@@ -47,7 +47,7 @@ final readonly class ArrayConfig implements Config
         $valuesRaw = \explode(',', $value);
         $values = [];
         foreach ($valuesRaw as $v) {
-            if (1 !== \preg_match('/^[0-9]+$/', $v)) {
+            if (1 !== \preg_match('/^([0-9]|[1-9]+[0-9]*)$/', $v)) {
                 throw new \InvalidArgumentException('Invalid config value provided key=' . $key . ' value=' . $v);
             }
             $values[] = \intval($v);

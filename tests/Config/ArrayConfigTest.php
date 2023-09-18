@@ -88,10 +88,10 @@ final class ArrayConfigTest extends TestCase
     public function testGetIntegerArrayHasInvalidValue(): void
     {
         $config = new ArrayConfig([
-            'foo' => '0,1,20000,0x0aaf',
+            'foo' => '0,1,20000,0666,0x0aaf',
         ]);
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid config value provided key=foo value=0x0aaf');
+        $this->expectExceptionMessage('Invalid config value provided key=foo value=0666');
         $config->getIntegerArray('foo');
     }
 
