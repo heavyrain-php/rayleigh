@@ -1,0 +1,57 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "rayleigh/http-client",
+  "description": "S.S.S. Rayleigh Framework - HTTP Client Component",
+  "version": "0.0.3",
+  "type": "library",
+  "keywords": [
+    "rayleigh",
+    "http",
+    "psr18"
+  ],
+  "homepage": "https://heavyrain-php.github.io/rayleigh/",
+  "readme": "README.md",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Masaru Yamagishi",
+      "email": "akai_inu@live.jp",
+      "homepage": "https://cafe-capy.net",
+      "role": "Author"
+    }
+  ],
+  "support": {
+    "docs": "https://heavyrain-php.github.io/rayleigh/",
+    "issues": "https://github.com/heavyrain-php/rayleigh/issues",
+    "source": "https://github.com/heavyrain-php/rayleigh/"
+  },
+  "provide": {
+    "psr/http-client-implementation": "1.0.3"
+  },
+  "require": {
+    "php": "~8.1.0|~8.2.0|~8.3.0",
+    "psr/http-client": "^1.0.0",
+    "rayleigh/http-message": "^0.0.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.2.8"
+  },
+  "suggest": {},
+  "autoload": {
+    "psr-4": {
+      "Rayleigh\\HttpClient\\": ""
+    },
+    "exclude-from-classmap": [
+      "*Test.php"
+    ]
+  },
+  "scripts": {
+    "test": "phpunit *Test.php"
+  },
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}

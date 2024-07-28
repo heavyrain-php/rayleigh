@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * @license MIT
@@ -7,7 +9,6 @@
 namespace Rayleigh\Container;
 
 use Closure;
-use PHPUnit\Event\Runtime\Runtime;
 use Rayleigh\Contracts\Container as ContainerInterface;
 use ReflectionFunction;
 use RuntimeException;

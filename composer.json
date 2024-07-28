@@ -18,7 +18,14 @@
     }
   },
   "replace": {
+    "rayleigh/cache": "self.version",
     "rayleigh/clock": "self.version",
+    "rayleigh/container": "self.version",
+    "rayleigh/database": "self.version",
+    "rayleigh/http-client": "self.version",
+    "rayleigh/http-factory": "self.version",
+    "rayleigh/http-message": "self.version",
+    "rayleigh/http-server": "self.version",
     "rayleigh/log": "self.version"
   },
   "authors": [
@@ -36,11 +43,9 @@
     "php": "~8.1.0|~8.2.0|~8.3.0"
   },
   "require-dev": {
-    "phpstan/phpstan": "^1.11.8",
-    "phpunit/phpunit": "^11.2.8"
+    "phpstan/phpstan": "^1.11.8"
   },
   "scripts": {
-    "test": "phpunit src/**/*Test.php",
     "lint": "phpstan analyse src"
   },
   "prefer-stable": true,
