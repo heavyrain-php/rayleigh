@@ -1,7 +1,7 @@
 {
   "$schema": "https://getcomposer.org/schema.json",
   "name": "rayleigh/clock",
-  "description": "S.S.S. Framework - Clock Component",
+  "description": "S.S.S. Rayleigh Framework - Clock Component",
   "version": "0.0.3",
   "type": "library",
   "keywords": [
@@ -22,9 +22,9 @@
     }
   ],
   "support": {
-    "docs": "https://cafe-capy.net/capybara-onsen/",
-    "issues": "https://github.com/il-m-yamagishi/capybara-onsen/issues",
-    "source": "https://github.com/il-m-yamagishi/capybara-onsen/"
+    "docs": "https://heavyrain-php.github.io/rayleigh/",
+    "issues": "https://github.com/heavyrain-php/rayleigh/issues",
+    "source": "https://github.com/heavyrain-php/rayleigh/"
   },
   "provide": {
     "psr/clock-implementation": "1.0"
