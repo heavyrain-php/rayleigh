@@ -1,0 +1,65 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "rayleigh/clock",
+  "description": "S.S.S. Framework - Clock Component",
+  "version": "0.0.3",
+  "type": "library",
+  "keywords": [
+    "rayleigh",
+    "clock",
+    "time",
+    "psr20"
+  ],
+  "homepage": "https://heavyrain-php.github.io/rayleigh/",
+  "readme": "README.md",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Masaru Yamagishi",
+      "email": "akai_inu@live.jp",
+      "homepage": "https://cafe-capy.net",
+      "role": "Author"
+    }
+  ],
+  "support": {
+    "docs": "https://cafe-capy.net/capybara-onsen/",
+    "issues": "https://github.com/il-m-yamagishi/capybara-onsen/issues",
+    "source": "https://github.com/il-m-yamagishi/capybara-onsen/"
+  },
+  "provide": {
+    "psr/clock-implementation": "1.0"
+  },
+  "require": {
+    "php": "~8.1.0|~8.2.0|~8.3.0",
+    "psr/clock": "^1.0.0"
+  },
+  "require-dev": {
+    "cakephp/chronos": "^3.0.0",
+    "nesbot/carbon": "^3.0.0",
+    "phpunit/phpunit": "^11.2.8"
+  },
+  "suggest": {
+    "nesbot/carbon": "^3.0 To use ::AsCarbonImmutable method",
+    "cakephp/chronos": "^3.0 To use ::AsChronos method"
+  },
+  "autoload": {
+    "psr-4": {
+      "Rayleigh\\Clock\\": ""
+    },
+    "files": [
+      "functions.php"
+    ],
+    "exclude-from-classmap": [
+      "*Test.php"
+    ]
+  },
+  "scripts": {
+    "test": "phpunit *Test.php"
+  },
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
