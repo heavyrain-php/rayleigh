@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Rayleigh\HttpMessage;
 
 use Rayleigh\HttpMessage\Internal\UriPartsParser;
-use Rayleigh\HttpMessage\Internal\UriScheme;
 use JsonSerializable;
 use Psr\Http\Message\UriInterface;
 use Stringable;
@@ -32,16 +31,33 @@ use Stringable;
  *         urn:example:animal:ferret:nose
  * ```
  */
-class Uri implements UriInterface, Stringable, JsonSerializable
+/* readonly */ class Uri implements UriInterface, Stringable, JsonSerializable
 {
-    private readonly string $scheme;
-    private readonly string $user;
-    private readonly string $pass;
-    private readonly string $host;
-    private readonly ?int $port;
-    private readonly string $path;
-    private readonly string $query;
-    private readonly string $fragment;
+    /**
+     * Well-known scheme port map
+     */
+    protected const WELL_KNOWN_SCHEME_PORT_MAP = [
+        'ftp' => 20,
+        'ssh' => 22,
+        'telnet' => 23,
+        'smtp' => 25,
+        'dns' => 53,
+        'http' => 80,
+        'pop' => 110,
+        'nntp' => 119,
+        'imap' => 143,
+        'ldap' => 389,
+        'https' => 443,
+    ];
+
+    protected readonly string $scheme;
+    protected readonly string $user;
+    protected readonly string $pass;
+    protected readonly string $host;
+    protected readonly ?int $port;
+    protected readonly string $path;
+    protected readonly string $query;
+    protected readonly string $fragment;
 
     /**
      * Create new Uri instance
@@ -58,6 +74,16 @@ class Uri implements UriInterface, Stringable, JsonSerializable
         $this->path = $parts['path'];
         $this->query = $parts['query'];
         $this->fragment = $parts['fragment'];
+
+        // validate state
+        if ($this->getAuthority() === '') {
+            if (\str_starts_with($this->path, '//')) {
+                throw new MalformedUriException('Invalid URI: Authority is required when path starts with "//"');
+            }
+            if ($this->scheme === '' && \strpos(\explode('/', $this->path, 2)[0], ':') !== false) {
+                throw new MalformedUriException('Invalid URI: Scheme is required when path contains ":"');
+            }
+        }
     }
 
     public function getScheme(): string
@@ -122,7 +148,19 @@ class Uri implements UriInterface, Stringable, JsonSerializable
         if ($this->port !== null) {
             return $this->port;
         }
-        return UriScheme::getDefaultPort($this->scheme);
+        if (\array_key_exists($this->scheme, self::WELL_KNOWN_SCHEME_PORT_MAP)) {
+            return self::WELL_KNOWN_SCHEME_PORT_MAP[$this->scheme];
+        }
+        return null;
+    }
+
+    /**
+     * Check if the URI uses the default port for the scheme
+     * @return bool
+     */
+    public function isDefaultPort(): bool
+    {
+        return $this->port === null || $this->port === $this->getPortOrDefault();
     }
 
     public function getPath(): string
@@ -148,9 +186,9 @@ class Uri implements UriInterface, Stringable, JsonSerializable
 
     public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
-        $userInfo = $user . ($password !== null ? ':' . $password : '');
+        $pass = $password === null ? '' : $password;
         // @phpstan-ignore-next-line
-        return new self(UriPartsParser::parseWithNewParts($this, compact('userInfo')));
+        return new self(UriPartsParser::parseWithNewParts($this, compact('user', 'pass')));
     }
 
     public function withHost(string $host): UriInterface
@@ -185,7 +223,33 @@ class Uri implements UriInterface, Stringable, JsonSerializable
 
     public function __toString(): string
     {
-        throw new \LogicException('Not implemented');
+        $uri = '';
+
+        if ($this->scheme !== '') {
+            $uri .= $this->scheme . ':';
+        }
+
+        $authority = $this->getAuthority();
+        if ($authority !== '' || $this->scheme === 'file') {
+            $uri .= '//' . $authority;
+        }
+
+        $path = $this->path;
+        if ($authority !== '' && $path !== '' && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
+
+        $uri .= $path;
+
+        if ($this->query !== '') {
+            $uri .= '?' . $this->query;
+        }
+
+        if ($this->fragment !== '') {
+            $uri .= '#' . $this->fragment;
+        }
+
+        return $uri;
     }
 
     /**

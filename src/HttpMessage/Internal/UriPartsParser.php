@@ -22,6 +22,18 @@ use Rayleigh\HttpMessage\Uri;
 final class UriPartsParser
 {
     /**
+     * Sub deliminations characters
+     * @link https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
+     */
+    private const SUB_DELIMS_CHARACTERS = '!\$&\'\(\)\*\+,;=';
+
+    /**
+     * Unreserved characters
+     * @link https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
+     */
+    private const UNRESERVED_CHARACTERS = 'a-zA-Z0-9\-\._~';
+
+    /**
      * Parse any array to URI parts
      * @param array<array-key, mixed> $parts
      * @return array{scheme: string, user: string, pass: string, host: string, port: ?int, path: string, query: string, fragment: string}
@@ -115,36 +127,87 @@ final class UriPartsParser
     private static function filterScheme(mixed $scheme): string
     {
         if (\is_string($scheme)) {
-            return \strtolower(\trim($scheme, ':/'));
+            $scheme = \strtolower(\rtrim($scheme, ':/'));
+            // @link https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+            // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+            if (false === \preg_match('/[a-z][^0-9a-z\+\-\.]*/', $scheme)) {
+                // Detect invalid characters
+                throw new \InvalidArgumentException('Invalid scheme provided: ' . $scheme);
+            }
+            return $scheme;
         }
         return '';
     }
 
     private static function filterUser(mixed $user): string
     {
+        if (\is_string($user)) {
+            return self::safeString($user);
+        }
+        return '';
     }
 
     private static function filterPass(mixed $pass): string
     {
+        if (\is_string($pass)) {
+            return self::safeString($pass);
+        }
+        return '';
     }
 
     private static function filterHost(mixed $host): string
     {
+        if (\is_string($host)) {
+            return \strtolower($host);
+        }
+        return '';
     }
 
     private static function filterPort(mixed $port): ?int
     {
+        if ($port === null) {
+            return null;
+        }
+        $port = (int) $port;
+        if ($port < 1 || $port > 65535) {
+            throw new \InvalidArgumentException(
+                \sprintf('Invalid port: %d. Must be between 0 and 65535', $port),
+            );
+        }
+        return $port;
     }
 
     private static function filterPath(mixed $path): string
     {
+        if (\is_string($path)) {
+            return self::safeString($path);
+        }
+        return '';
     }
 
     private static function filterQuery(mixed $query): string
     {
+        if (\is_string($query)) {
+            return self::safeString($query);
+        }
+        return '';
     }
 
     private static function filterFragment(mixed $fragment): string
     {
+        if (\is_string($fragment)) {
+            return self::safeString($fragment);
+        }
+        return '';
+    }
+
+    private static function safeString(string $str): string
+    {
+        return \preg_replace_callback(
+            // safe characters or percent-encoded characters
+            '/(?:[^' . self::UNRESERVED_CHARACTERS . self::SUB_DELIMS_CHARACTERS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
+            static fn (array $matches): string => \rawurlencode($matches[0]),
+            $str,
+        );
     }
 }
