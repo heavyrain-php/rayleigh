@@ -160,7 +160,18 @@ use Stringable;
      */
     public function isDefaultPort(): bool
     {
-        return $this->port === null || $this->port === $this->getPortOrDefault();
+        $hasDefaultPort = $this->hasDefaultPort();
+
+        if ($hasDefaultPort) {
+            $defaultPort = self::WELL_KNOWN_SCHEME_PORT_MAP[$this->scheme];
+            return $this->port === null || $this->port === $defaultPort;
+        }
+        return false;
+    }
+
+    public function hasDefaultPort(): bool
+    {
+        return \array_key_exists($this->scheme, self::WELL_KNOWN_SCHEME_PORT_MAP);
     }
 
     public function getPath(): string
@@ -253,19 +264,10 @@ use Stringable;
     }
 
     /**
-     * @return array{scheme: string, user: string, host: string, port: ?int, path: string, query: string, fragment: string}
+     * @return string
      */
     public function jsonSerialize(): mixed
     {
-        return [
-            'scheme' => $this->scheme,
-            'user' => $this->user,
-            // 'pass' => $this->pass, // Ignore for security risk
-            'host' => $this->host,
-            'port' => $this->port,
-            'path' => $this->path,
-            'query' => $this->query,
-            'fragment' => $this->fragment,
-        ];
+        return $this->__toString();
     }
 }

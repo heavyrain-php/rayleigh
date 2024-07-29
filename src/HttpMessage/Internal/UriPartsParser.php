@@ -142,7 +142,7 @@ final class UriPartsParser
     private static function filterUser(mixed $user): string
     {
         if (\is_string($user)) {
-            return self::safeString($user);
+            return self::urlSafeString($user);
         }
         return '';
     }
@@ -150,7 +150,7 @@ final class UriPartsParser
     private static function filterPass(mixed $pass): string
     {
         if (\is_string($pass)) {
-            return self::safeString($pass);
+            return self::urlSafeString($pass);
         }
         return '';
     }
@@ -168,8 +168,9 @@ final class UriPartsParser
         if ($port === null) {
             return null;
         }
-        $port = (int) $port;
-        if ($port < 1 || $port > 65535) {
+        // @phpstan-ignore-next-line
+        $port = \intval($port);
+        if ($port < 0 || $port > 65535) {
             throw new \InvalidArgumentException(
                 \sprintf('Invalid port: %d. Must be between 0 and 65535', $port),
             );
@@ -180,7 +181,7 @@ final class UriPartsParser
     private static function filterPath(mixed $path): string
     {
         if (\is_string($path)) {
-            return self::safeString($path);
+            return self::urlSafeString($path);
         }
         return '';
     }
@@ -188,7 +189,7 @@ final class UriPartsParser
     private static function filterQuery(mixed $query): string
     {
         if (\is_string($query)) {
-            return self::safeString($query);
+            return self::urlSafeString($query);
         }
         return '';
     }
@@ -196,18 +197,24 @@ final class UriPartsParser
     private static function filterFragment(mixed $fragment): string
     {
         if (\is_string($fragment)) {
-            return self::safeString($fragment);
+            return self::urlSafeString($fragment);
         }
         return '';
     }
 
-    private static function safeString(string $str): string
+    private static function urlSafeString(string $str): string
     {
-        return \preg_replace_callback(
+        $result = \preg_replace_callback(
             // safe characters or percent-encoded characters
             '/(?:[^' . self::UNRESERVED_CHARACTERS . self::SUB_DELIMS_CHARACTERS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
             static fn (array $matches): string => \rawurlencode($matches[0]),
             $str,
         );
+
+        if ($result === null) {
+            throw new \RuntimeException('Failed to encode URL string: ' . $str);
+        }
+
+        return $result;
     }
 }
