@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Class Uri
+ * Class UriTest
  * @package Rayleigh\HttpMessage
  * @author Masaru Yamagishi <akai_inu@live.jp>
  * @license Apache-2.0
