@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 /**
- * Class Uri
- * @package Rayleigh\HttpMessage\Internal
  * @author Masaru Yamagishi <akai_inu@live.jp>
  * @license Apache-2.0
  */
@@ -127,12 +125,15 @@ final class UriPartsParser
     private static function filterScheme(mixed $scheme): string
     {
         if (\is_string($scheme)) {
+            if ($scheme === '') {
+                return '';
+            }
             $scheme = \strtolower(\rtrim($scheme, ':/'));
             // @link https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
             // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-            if (false === \preg_match('/[a-z][^0-9a-z\+\-\.]*/', $scheme)) {
+            if (1 !== \preg_match('/[a-z][^0-9a-z\+\-\.]*/', $scheme)) {
                 // Detect invalid characters
-                throw new \InvalidArgumentException('Invalid scheme provided: ' . $scheme);
+                throw new MalformedUriException('Invalid scheme provided: ' . $scheme);
             }
             return $scheme;
         }
@@ -212,7 +213,7 @@ final class UriPartsParser
         );
 
         if ($result === null) {
-            throw new \RuntimeException('Failed to encode URL string: ' . $str);
+            throw new \RuntimeException('Failed to encode URL string: ' . $str); // @codeCoverageIgnore
         }
 
         return $result;

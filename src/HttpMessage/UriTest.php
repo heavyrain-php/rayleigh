@@ -64,7 +64,6 @@ final class UriTest extends TestCase
 
             // Plus alpha
             'Plus alpha 1' => ['https://日本語.com'],
-            'Plus alpha 2' => ['0://0:0@0/0?0#0'],
             'Plus alpha 3' => ['file:///tmp/filename.txt'],
             'Plus alpha 4' => ['http://[2a00:f48:1008::212:183:10]:56?foo=bar'],
         ];
@@ -76,10 +75,11 @@ final class UriTest extends TestCase
     public static function getInvalidUris(): array
     {
         return [
+            'Valid in other libraries' => ['0://0:0@0/0?0#0'], // It is invalid scheme
             'Only http Scheme' => ['http://'],
             'Host with colon' => ['urn://host:with:colon/'],
             'UTF-8 Scheme' => ['日本語://example.com'],
-            'No authority but multiple slashes' => ['///test'],
+            'No authority but multiple slashes' => ['file:////test'],
         ];
     }
 
@@ -227,5 +227,60 @@ final class UriTest extends TestCase
         $actual = \json_encode(\compact('uri'));
 
         self::assertSame($expected, $actual);
+    }
+
+    #[Test]
+    public function testWithMethods(): void
+    {
+        $uri = new Uri();
+
+        self::assertNotsame($uri, $uri->withScheme('https'));
+        self::assertNotSame($uri, $uri->withUserInfo('user', 'password'));
+        self::assertNotSame($uri, $uri->withHost('example.com'));
+        self::assertNotSame($uri, $uri->withPort(8443));
+        self::assertNotSame($uri, $uri->withPath('/path'));
+        self::assertNotSame($uri, $uri->withQuery('query'));
+        self::assertNotSame($uri, $uri->withFragment('fragment'));
+    }
+
+    #[Test]
+    public function testGetProperties(): void
+    {
+        $uri = new Uri();
+
+        self::assertSame('', $uri->getScheme());
+        self::assertSame('', $uri->getUserInfo());
+        self::assertSame('', $uri->getHost());
+        self::assertNull($uri->getPort());
+        self::assertSame('', $uri->getAuthority());
+        self::assertSame('', $uri->getPath());
+        self::assertSame('', $uri->getQuery());
+        self::assertSame('', $uri->getFragment());
+    }
+
+    #[Test]
+    public function testGetUserInfo(): void
+    {
+        $uri = new Uri('https://example.com');
+        self::assertSame('', $uri->getUserInfo());
+
+        $uri = new Uri('https://anonymous@example.com');
+        self::assertSame('anonymous', $uri->getUserInfo());
+
+        $uri = new Uri('https://anonymous:password@example.com');
+        self::assertSame('anonymous:password', $uri->getUserInfo());
+    }
+
+    #[Test]
+    public function testToStringFilteredPath(): void
+    {
+        $expected = 'https://example.com/:../';
+
+        $uri = (new Uri())
+            ->withScheme('https')
+            ->withPath(':../')
+            ->withHost('example.com');
+
+        self::assertSame($expected, $uri->__toString());
     }
 }
