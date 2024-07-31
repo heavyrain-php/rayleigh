@@ -9,13 +9,15 @@ declare(strict_types=1);
  * @license Apache-2.0
  */
 
-namespace Rayleigh\HttpMessage;
+namespace Rayleigh\HttpMessage\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Rayleigh\HttpMessage\Internal\UriPartsParser;
+use Rayleigh\HttpMessage\MalformedUriException;
+use Rayleigh\HttpMessage\Uri;
 
 #[CoversClass(Uri::class)]
 #[CoversClass(UriPartsParser::class)]

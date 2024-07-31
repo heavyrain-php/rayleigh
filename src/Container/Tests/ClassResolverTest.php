@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
- * @license MIT
+ * @author Masaru Yamagishi <akai_inu@live.jp>
+ * @license Apache-2.0
  */
 
-namespace Rayleigh\Tests\Container;
+namespace Rayleigh\Container\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -48,7 +51,7 @@ final class ClassResolverTest extends TestCase
         $resolver = new ClassResolver($container);
 
         $this->expectException(ReflectionException::class);
-        $this->expectExceptionMessage('circular dependency detected: Rayleigh\Tests\Container\CircularDepsB');
+        $this->expectExceptionMessage('circular dependency detected: Rayleigh\Container\Tests\CircularDepsB');
 
         $resolver->resolve(CircularDepsA::class);
     }

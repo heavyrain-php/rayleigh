@@ -30,18 +30,17 @@
     "ext-pdo": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^11.2.8",
-    "ext-pdo-mysql": "*"
+    "ext-pdo_mysql": "*"
   },
   "suggest": {
-    "ext-pdo-mysql": "Need to use MySQL"
+    "ext-pdo_mysql": "Need to use MySQL"
   },
   "autoload": {
     "psr-4": {
       "Rayleigh\\Database\\": ""
     },
     "exclude-from-classmap": [
-      "*Test.php"
+      "Tests/"
     ]
   },
   "scripts": {

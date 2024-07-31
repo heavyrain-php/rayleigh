@@ -35,8 +35,7 @@
   },
   "require-dev": {
     "cakephp/chronos": "^3.0.0",
-    "nesbot/carbon": "^3.0.0",
-    "phpunit/phpunit": "^11.2.8"
+    "nesbot/carbon": "^3.0.0"
   },
   "suggest": {
     "nesbot/carbon": "^3.0 To use ::AsCarbonImmutable method",
@@ -50,12 +49,10 @@
       "functions.php"
     ],
     "exclude-from-classmap": [
-      "*Test.php"
+      "Tests/"
     ]
   },
-  "scripts": {
-    "test": "phpunit *Test.php"
-  },
+  "scripts": {},
   "prefer-stable": true,
   "config": {
     "optimize-autoloader": true,

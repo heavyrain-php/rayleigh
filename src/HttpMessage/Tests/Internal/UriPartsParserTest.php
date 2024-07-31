@@ -7,11 +7,12 @@ declare(strict_types=1);
  * @license Apache-2.0
  */
 
-namespace Rayleigh\HttpMessage\Internal;
+namespace Rayleigh\HttpMessage\Tests\Internal;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Rayleigh\HttpMessage\Internal\UriPartsParser;
 
 /**
  * Class UriPartsParserTest

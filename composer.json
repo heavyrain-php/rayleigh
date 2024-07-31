@@ -15,7 +15,10 @@
   "autoload": {
     "psr-4": {
       "Rayleigh\\": "src/"
-    }
+    },
+    "exclude-from-classmap": [
+      "*/Tests/"
+    ]
   },
   "replace": {
     "rayleigh/cache": "self.version",
@@ -40,13 +43,31 @@
     "source": "https://github.com/heavyrain-php/rayleigh/"
   },
   "require": {
-    "php": "~8.1.0|~8.2.0|~8.3.0"
+    "php": "~8.1.0|~8.2.0|~8.3.0",
+    "ext-pdo": "*",
+    "psr/cache": "^3.0.0",
+    "psr/clock": "^1.0.0",
+    "psr/container": "^2.0.0",
+    "psr/http-client": "^1.0.0",
+    "psr/http-factory": "^1.0.0",
+    "psr/http-message": "^2.0.0",
+    "psr/http-server-handler": "^1.0.0",
+    "psr/http-server-middleware": "^1.0.0",
+    "psr/log": "^2.0.0|^3.0.0",
+    "psr/simple-cache": "^3.0.0"
   },
   "require-dev": {
-    "phpstan/phpstan": "^1.11.8"
+    "ext-pdo_mysql": "*",
+    "cakephp/chronos": "^3.0.0",
+    "nesbot/carbon": "^3.0.0",
+    "phpstan/phpstan": "^1.11.8",
+    "phpunit/phpunit": "^11.2.9"
   },
   "scripts": {
-    "lint": "phpstan analyse src"
+    "lint": "phpstan analyse src",
+    "test": "phpunit",
+    "coverage": "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-html=coverage",
+    "coverage-html": "php -S localhost:8080 -t coverage"
   },
   "prefer-stable": true,
   "config": {

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license Apache-2.0
  */
 
-namespace Rayleigh\Clock;
+namespace Rayleigh\Clock\Tests;
 
 use DateTimeImmutable;
 use DateTimeZone;
@@ -18,6 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Clock\ClockInterface;
+use Rayleigh\Clock\GlobalClock;
 
 #[CoversClass(GlobalClock::class)]
 final class GlobalClockTest extends TestCase

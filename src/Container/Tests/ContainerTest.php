@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
- * @license MIT
+ * @author Masaru Yamagishi <akai_inu@live.jp>
+ * @license Apache-2.0
  */
 
-namespace Rayleigh\Tests\Container;
+namespace Rayleigh\Container\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -75,7 +78,8 @@ final class ContainerTest extends TestCase
         self::assertFalse($container->has('non-existing id'));
 
         // Callable instance
-        $container->bind('callable instance', new class {
+        $container->bind('callable instance', new class
+        {
             public function __invoke(): string
             {
                 return 'world';

@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @license MIT
+ * @author Masaru Yamagishi <akai_inu@live.jp>
+ * @license Apache-2.0
  */
 
 namespace Rayleigh\Container;

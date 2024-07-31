@@ -1,10 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
- * @license MIT
+ * @author Masaru Yamagishi <akai_inu@live.jp>
+ * @license Apache-2.0
  */
 
-namespace Rayleigh\Tests\Container;
+namespace Rayleigh\Container\Tests;
 
 final class StubClass
 {

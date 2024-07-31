@@ -33,21 +33,17 @@
     "psr/http-client": "^1.0.0",
     "rayleigh/http-message": "^0.0.3"
   },
-  "require-dev": {
-    "phpunit/phpunit": "^11.2.8"
-  },
+  "require-dev": {},
   "suggest": {},
   "autoload": {
     "psr-4": {
       "Rayleigh\\HttpClient\\": ""
     },
     "exclude-from-classmap": [
-      "*Test.php"
+      "Tests/"
     ]
   },
-  "scripts": {
-    "test": "phpunit *Test.php"
-  },
+  "scripts": {},
   "prefer-stable": true,
   "config": {
     "optimize-autoloader": true,

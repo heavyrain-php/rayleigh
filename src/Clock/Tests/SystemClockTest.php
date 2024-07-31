@@ -9,12 +9,13 @@ declare(strict_types=1);
  * @license Apache-2.0
  */
 
-namespace Rayleigh\Clock;
+namespace Rayleigh\Clock\Tests;
 
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Rayleigh\Clock\SystemClock;
 
 #[CoversClass(SystemClock::class)]
 final class SystemClockTest extends TestCase

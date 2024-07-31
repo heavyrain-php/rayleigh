@@ -33,8 +33,7 @@
     "psr/log": "^2.0.0|^3.0.0"
   },
   "require-dev": {
-    "monolog/monolog": "^3.7.0",
-    "phpunit/phpunit": "^11.2.8"
+    "monolog/monolog": "^3.7.0"
   },
   "suggest": {
     "monolog/monolog": "^3.0 To use MonologWriter"
@@ -44,12 +43,10 @@
       "Rayleigh\\Log\\": ""
     },
     "exclude-from-classmap": [
-      "*Test.php"
+      "Tests/"
     ]
   },
-  "scripts": {
-    "test": "phpunit *Test.php"
-  },
+  "scripts": {},
   "prefer-stable": true,
   "config": {
     "optimize-autoloader": true,

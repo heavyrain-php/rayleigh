@@ -9,16 +9,17 @@ declare(strict_types=1);
  * @license Apache-2.0
  */
 
-namespace Rayleigh\Clock;
+namespace Rayleigh\Clock\Tests;
 
 use Cake\Chronos\Chronos;
 use DateTimeImmutable;
-use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Clock\ClockInterface;
+use Rayleigh\Clock\AsChronosTrait;
 
-#[CoversClass(AsChronosTrait::class)]
+#[CoversTrait(AsChronosTrait::class)]
 final class AsChronosTraitTest extends TestCase
 {
     #[Test]

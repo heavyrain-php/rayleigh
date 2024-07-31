@@ -44,7 +44,7 @@
       "Rayleigh\\Cache\\": ""
     },
     "exclude-from-classmap": [
-      "*Test.php"
+      "Tests/"
     ]
   },
   "scripts": {
