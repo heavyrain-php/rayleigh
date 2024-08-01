@@ -94,10 +94,10 @@ use Stringable;
     public function getAuthority(): string
     {
         $authority = $this->host;
-        $userInfo = $this->getUserInfo();
+        $user_info = $this->getUserInfo();
 
-        if ($userInfo !== '') {
-            $authority = $userInfo . '@' . $authority;
+        if ($user_info !== '') {
+            $authority = $user_info . '@' . $authority;
         }
 
         if ($this->port !== null) {

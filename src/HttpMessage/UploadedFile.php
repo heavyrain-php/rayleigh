@@ -56,27 +56,27 @@ class UploadedFile implements UploadedFileInterface
      * Client file name when provided
      * @var null|string
      */
-    private readonly ?string $clientFilename;
+    private readonly ?string $client_filename;
 
     /**
      * Client media type when provided
      * @var null|string
      */
-    private readonly ?string $clientMediaType;
+    private readonly ?string $client_media_type;
 
     /**
      * Whether the uploaded file has already been moved
      * @var bool
      */
-    private bool $wasMoved = false;
+    private bool $was_moved = false;
 
     /**
      * Create a new uploaded file object
      * @param mixed $input
      * @param null|int $size
      * @param int $error
-     * @param null|string $clientFilename
-     * @param null|string $clientMediaType
+     * @param null|string $client_filename
+     * @param null|string $client_media_type
      * @return void
      * @throws InvalidArgumentException
      */
@@ -84,8 +84,8 @@ class UploadedFile implements UploadedFileInterface
         mixed $input,
         ?int $size = null,
         int $error = \UPLOAD_ERR_OK,
-        ?string $clientFilename = null,
-        ?string $clientMediaType = null,
+        ?string $client_filename = null,
+        ?string $client_media_type = null,
     ) {
         if (!\array_key_exists($error, self::VALID_ERROR_CODES)) {
             throw new InvalidArgumentException('Invalid error code');
@@ -93,8 +93,8 @@ class UploadedFile implements UploadedFileInterface
         $this->input = $this->getStreamFromMixed($input, $error);
         $this->error = $error;
         $this->size = $size;
-        $this->clientFilename = $clientFilename;
-        $this->clientMediaType = $clientMediaType;
+        $this->client_filename = $client_filename;
+        $this->client_media_type = $client_media_type;
     }
 
     /**
@@ -130,7 +130,7 @@ class UploadedFile implements UploadedFileInterface
         if ($this->error !== \UPLOAD_ERR_OK || $this->input === null) {
             throw new RuntimeException('Cannot retrieve stream due to upload error');
         }
-        if ($this->wasMoved) {
+        if ($this->was_moved) {
             throw new RuntimeException('Cannot retrieve stream after it has already been moved');
         }
     }
@@ -160,11 +160,11 @@ class UploadedFile implements UploadedFileInterface
             }
 
             // filePath
-            $this->wasMoved = \PHP_SAPI === 'cli' ?
+            $this->was_moved = \PHP_SAPI === 'cli' ?
                 \rename($this->input, $targetPath) :
                 \move_uploaded_file($this->input, $targetPath); // @codeCoverageIgnore
 
-            if ($this->wasMoved === false) {
+            if ($this->was_moved === false) {
                 throw new RuntimeException('Error occurred while moving uploaded file'); // @codeCoverageIgnore
             }
             return;
@@ -190,7 +190,7 @@ class UploadedFile implements UploadedFileInterface
         } finally {
             \fclose($resource);
         }
-        $this->wasMoved = true;
+        $this->was_moved = true;
     }
 
     public function getSize(): ?int
@@ -225,11 +225,11 @@ class UploadedFile implements UploadedFileInterface
 
     public function getClientFilename(): ?string
     {
-        return $this->clientFilename;
+        return $this->client_filename;
     }
 
     public function getClientMediaType(): ?string
     {
-        return $this->clientMediaType;
+        return $this->client_media_type;
     }
 }
