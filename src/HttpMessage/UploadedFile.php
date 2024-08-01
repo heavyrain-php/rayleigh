@@ -18,7 +18,7 @@ use RuntimeException;
  * PSR-7 UploadedFile implementation
  * @package Rayleigh\HttpMessage
  */
-final class UploadedFile implements UploadedFileInterface
+class UploadedFile implements UploadedFileInterface
 {
     private const VALID_ERROR_CODES = [
         \UPLOAD_ERR_OK => true,
@@ -112,14 +112,17 @@ final class UploadedFile implements UploadedFileInterface
         if ($input instanceof StreamInterface) {
             return $input;
         }
-        if (\is_resource($input) || \is_string($input)) {
-            // resource or filePath
+        if (\is_string($input)) {
+            // filePath
+            if (\PHP_SAPI !== 'cli' && \is_uploaded_file($input) === false) {
+                throw new RuntimeException('Invalid uploaded file'); // @codeCoverageIgnore
+            }
             return $input;
         }
-        if (\is_int($input) || \is_float($input) || \is_bool($input)) {
+        if (\is_resource($input) || \is_int($input) || \is_float($input) || \is_bool($input)) {
             return new Stream($input);
         }
-        throw new InvalidArgumentException('Invalid input provided:' . \gettype($input));
+        throw new InvalidArgumentException('Invalid input provided:' . \gettype($input)); // @codeCoverageIgnore
     }
 
     private function validateValidStream(): void
@@ -159,7 +162,7 @@ final class UploadedFile implements UploadedFileInterface
             // filePath
             $this->wasMoved = \PHP_SAPI === 'cli' ?
                 \rename($this->input, $targetPath) :
-                \move_uploaded_file($this->input, $targetPath);
+                \move_uploaded_file($this->input, $targetPath); // @codeCoverageIgnore
 
             if ($this->wasMoved === false) {
                 throw new RuntimeException('Error occurred while moving uploaded file'); // @codeCoverageIgnore
@@ -216,7 +219,7 @@ final class UploadedFile implements UploadedFileInterface
             \UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
             \UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
             \UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help.',
-            default => 'Unknown error',
+            default => 'Unknown error', // @codeCoverageIgnore
         };
     }
 
