@@ -28,14 +28,14 @@
     - [PSR-16: Simple Cache](https://www.php-fig.org/psr/psr-16): WIP
     - [PSR-17: HTTP Factories](https://www.php-fig.org/psr/psr-17): WIP
     - [PSR-18: HTTP Client](https://www.php-fig.org/psr/psr-18): WIP
-    - [PSR-20: Clock(https://www.php-fig.org/psr/psr-20)
+    - [PSR-20: Clock](https://www.php-fig.org/psr/psr-20)
     - [PER Coding Style 2.0](https://www.php-fig.org/per/coding-style/): WIP
 - Smart DI Container, it can bind and resolve anything
 - Smart Database Abstraction with PDO: TODO
 - Supports [RoadRunner](https://roadrunner.dev/) to adopt wider protocols.
 - IDL Support
-    - OpenAPI 3.0: TODO
-    - gRPC: TODO
+    - [OpenAPI 3.0](https://www.openapis.org/): TODO
+    - [gRPC](https://grpc.io/): TODO
     - anything else?
 
 ## Requirements
