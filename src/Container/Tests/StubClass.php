@@ -11,6 +11,7 @@ namespace Rayleigh\Container\Tests;
 
 final class StubClass
 {
+    // @phpstan-ignore-next-line
     public function __construct(
         $a,
         float $b,

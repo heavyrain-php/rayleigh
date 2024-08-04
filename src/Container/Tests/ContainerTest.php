@@ -21,6 +21,7 @@ use Rayleigh\Container\Container;
 #[CoversClass(Container::class)]
 final class ContainerTest extends TestCase
 {
+    /** @var resource|null $resource */
     private $resource = null;
 
     protected function tearDown(): void
@@ -49,7 +50,9 @@ final class ContainerTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('resource cannot be registered to container to avoid memory leak');
-        $this->resource = \fopen(__FILE__, 'r');
+        $resource = \fopen(__FILE__, 'r');
+        \assert($resource !== false);
+        $this->resource = $resource;
         $container->bind('foo', $this->resource);
     }
 
@@ -85,12 +88,15 @@ final class ContainerTest extends TestCase
                 return 'world';
             }
         });
+        /** @var callable $callable */
         $callable = $container->get('callable instance');
         self::assertSame('world', $callable());
 
         // Callable
         $container->bind('callable', fn () => 'hello');
-        self::assertSame('hello', $container->get('callable')());
+        /** @var callable $callable2 */
+        $callable2 = $container->get('callable');
+        self::assertSame('hello', $callable2());
 
         // Existing class
         $container->bind(\stdClass::class, $a = new \stdClass());
@@ -137,6 +143,7 @@ final class ContainerTest extends TestCase
 
         $container2 = new Container();
 
+        // @phpstan-ignore return.type
         self::assertSame($container2, $container->call(fn (ContainerInterface $container2): Container => $container2, compact('container2')));
     }
 }

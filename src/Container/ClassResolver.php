@@ -24,7 +24,7 @@ final class ClassResolver
     /**
      * @var array<class-string, bool>
      */
-    private array $resolvingConcretes = [];
+    private array $resolving_concretes = [];
 
     /**
      * Constructor
@@ -38,11 +38,11 @@ final class ClassResolver
     /**
      * Resolves a class name to an object.
      *
-     * @psalm-template T
+     * @template T of object
      * @param string $resolver
-     * @psalm-param class-string<T> $resolver
+     * @phpstan-param class-string<T> $resolver
      * @return object
-     * @psalm-return T
+     * @phpstan-return T
      * @throws ReflectionException
      */
     public function resolve(string $resolver): object
@@ -58,20 +58,21 @@ final class ClassResolver
             return $ref->newInstance();
         }
 
-        if (\array_key_exists($resolver, $this->resolvingConcretes)) {
+        if (\array_key_exists($resolver, $this->resolving_concretes)) {
             throw new ReflectionException(\sprintf('circular dependency detected: %s', $resolver));
         }
-        $this->resolvingConcretes[$resolver] = true;
+        $this->resolving_concretes[$resolver] = true;
 
         $resolvedParams = [];
         foreach ($ref->getConstructor()->getParameters() as $param) {
             $resolvedParams[] = $this->resolveParameter($param);
         }
 
-        unset($this->resolvingConcretes[$resolver]);
+        unset($this->resolving_concretes[$resolver]);
         $concrete = $ref->newInstanceArgs($resolvedParams);
 
-        if (\is_null($concrete)) {
+        // @phpstan-ignore identical.alwaysFalse
+        if ($concrete === null) {
             throw new ReflectionException(\sprintf('failed to instantiate %s', $resolver)); // @codeCoverageIgnore
         }
 
@@ -102,6 +103,7 @@ final class ClassResolver
 
         $type = $param->getType();
         \assert(!\is_null($type));
+        \assert($type instanceof \ReflectionNamedType);
         $typeName = $type->getName();
 
         if ($type->isBuiltin() && !$this->container->has($typeName)) {

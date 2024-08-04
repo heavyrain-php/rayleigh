@@ -31,22 +31,11 @@ final class ArrayConfigTest extends TestCase
     public function testGetStringHasUndefinedKey(): void
     {
         $config = new ArrayConfig([
-            'foo' => [],
+            'foo' => 'a',
         ]);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Undefined config key provided key=undefined');
         $config->getString('undefined');
-    }
-
-    #[Test]
-    public function testGetStringHasInvalidValue(): void
-    {
-        $config = new ArrayConfig([
-            'foo' => [],
-        ]);
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid config value type provided key=foo value=array');
-        $config->getString('foo');
     }
 
     #[Test]

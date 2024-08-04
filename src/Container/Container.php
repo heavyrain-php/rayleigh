@@ -19,12 +19,13 @@ use RuntimeException;
  */
 final class Container implements ContainerInterface
 {
+    /** @var array<string, mixed> $resolvers */
     private array $resolvers = [];
-    private ClassResolver $classResolver;
+    private ClassResolver $class_resolver;
 
     public function __construct()
     {
-        $this->classResolver = new ClassResolver($this);
+        $this->class_resolver = new ClassResolver($this);
     }
 
     public function bind(string $id, mixed $resolver): void
@@ -68,7 +69,7 @@ final class Container implements ContainerInterface
         // 2. Existing class
         if (\is_string($resolver) && \class_exists($resolver)) {
             // instances the class and returns it
-            return $this->classResolver->resolve($id, $resolver);
+            return $this->class_resolver->resolve($resolver);
         }
 
         // 3. Scalar
@@ -101,7 +102,7 @@ final class Container implements ContainerInterface
                 $resolvedArgs[] = $args[$param->getName()];
                 continue;
             }
-            $resolvedArgs[$param->getName()] = $this->classResolver->resolveParameter($param);
+            $resolvedArgs[$param->getName()] = $this->class_resolver->resolveParameter($param);
         }
 
         return $ref->invokeArgs($resolvedArgs);

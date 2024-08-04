@@ -31,6 +31,7 @@ final class ClassResolverTest extends TestCase
         $this->expectException(ReflectionException::class);
         $this->expectExceptionMessage('Class "Rayleigh\Tests\Container\ClassResolverTesta" does not exist');
 
+        // @phpstan-ignore argument.type
         $resolver->resolve('Rayleigh\Tests\Container\ClassResolverTesta');
     }
 

@@ -12,6 +12,7 @@ namespace Rayleigh\Container\Tests;
 final class CircularDepsB
 {
     public function __construct(
+        // @phpstan-ignore property.onlyWritten
         private readonly CircularDepsA $a,
     ) {
     }
