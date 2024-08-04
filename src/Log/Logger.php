@@ -17,7 +17,7 @@ use Stringable;
 /**
  * PSR-3 compatible Logger
  */
-class Logger extends AbstractLogger
+/* final readonly */ class Logger extends AbstractLogger
 {
     /** singleton instance */
     protected static ?Logger $global_instance = null;
@@ -26,8 +26,11 @@ class Logger extends AbstractLogger
      * @param WriterInterface[] $writers
      */
     public function __construct(
-        private readonly array $writers,
+        protected readonly array $writers,
     ) {
+        if (count($this->writers) === 0) {
+            throw new \RuntimeException("No writers are set");
+        }
     }
 
     /**
@@ -38,10 +41,10 @@ class Logger extends AbstractLogger
      */
     public static function setInstance(Logger $instance): void
     {
-        if (static::$global_instance !== null) {
+        if (self::$global_instance !== null) {
             throw new \RuntimeException("Logger instance is already set");
         }
-        static::$global_instance = $instance;
+        self::$global_instance = $instance;
     }
 
     /**
@@ -53,14 +56,13 @@ class Logger extends AbstractLogger
      * Logger::getInstance()->info("Message", compact('context'));
      * ```
      */
-    public static function getInstance(): static
+    public static function getInstance(): self
     {
-        if (static::$global_instance === null) {
+        if (self::$global_instance === null) {
             throw new \RuntimeException("Logger instance is not set");
         }
 
-        // @phpstan-ignore-next-line
-        return static::$global_instance;
+        return self::$global_instance;
     }
 
     /**
@@ -69,7 +71,7 @@ class Logger extends AbstractLogger
      */
     public static function clearInstance(): void
     {
-        static::$global_instance = null;
+        self::$global_instance = null;
     }
 
     /**

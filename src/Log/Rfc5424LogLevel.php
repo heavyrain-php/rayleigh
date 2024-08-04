@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 /**
- * Class Logger
- * @package Rayleigh\Log
  * @author Masaru Yamagishi <akai_inu@live.jp>
  * @license Apache-2.0
  */
@@ -15,6 +13,7 @@ use Psr\Log\LogLevel;
 
 /**
  * RFC 5424 Syslog Message Severities
+ * @package Rayleigh\Log
  * @see https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
  * @see https://github.com/php-fig/log/blob/master/src/LogLevel.php
  * @see https://github.com/Seldaek/monolog/blob/main/src/Monolog/Level.php
