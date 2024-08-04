@@ -138,27 +138,27 @@ final class HeaderBag
             $value = [$value];
         }
 
-        $formattedValues = [];
+        $formatted_values = [];
         foreach ($value as $v) {
             if (!\is_scalar($v)) {
                 throw new InvalidArgumentException('Header value must be a string');
             }
-            $trimmedV = \trim((string) $v, self::OPTIONAL_WHITESPACE);
+            $trimmed_value = \trim((string) $v, self::OPTIONAL_WHITESPACE);
 
-            if ($trimmedV === '') {
+            if ($trimmed_value === '') {
                 throw new InvalidArgumentException('Header value must be a present string');
             }
 
-            if (!\preg_match('/^[\x20\x09\x21-\x7E\x80-\xFF]*$/D', $trimmedV)) {
+            if (!\preg_match('/^[\x20\x09\x21-\x7E\x80-\xFF]*$/D', $trimmed_value)) {
                 throw new InvalidArgumentException('Invalid header value provided');
             }
-            $formattedValues[] = $trimmedV;
+            $formatted_values[] = $trimmed_value;
         }
 
-        if (\count($formattedValues) === 0) {
+        if (\count($formatted_values) === 0) {
             throw new InvalidArgumentException('Header value must be a present string');
         }
 
-        return $formattedValues;
+        return $formatted_values;
     }
 }
