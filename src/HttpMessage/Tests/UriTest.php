@@ -19,6 +19,10 @@ use Rayleigh\HttpMessage\Internal\UriPartsParser;
 use Rayleigh\HttpMessage\MalformedUriException;
 use Rayleigh\HttpMessage\Uri;
 
+/**
+ * Class UriTest
+ * @package Rayleigh\HttpMessage\Tests
+ */
 #[CoversClass(Uri::class)]
 #[CoversClass(UriPartsParser::class)]
 final class UriTest extends TestCase

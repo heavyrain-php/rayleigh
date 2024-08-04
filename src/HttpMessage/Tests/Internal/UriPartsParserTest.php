@@ -16,7 +16,7 @@ use Rayleigh\HttpMessage\Internal\UriPartsParser;
 
 /**
  * Class UriPartsParserTest
- * @package Rayleigh\HttpMessage\Internal
+ * @package Rayleigh\HttpMessage\Tests\Internal
  */
 #[CoversClass(UriPartsParser::class)]
 final class UriPartsParserTest extends TestCase

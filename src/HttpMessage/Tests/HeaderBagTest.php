@@ -18,7 +18,7 @@ use Rayleigh\HttpMessage\HeaderBag;
 
 /**
  * Class HeaderBagTest
- * @package Rayleigh\HttpMessage
+ * @package Rayleigh\HttpMessage\Tests
  */
 #[CoversClass(HeaderBag::class)]
 final class HeaderBagTest extends TestCase

@@ -20,7 +20,7 @@ use Rayleigh\HttpMessage\UploadedFile;
 
 /**
  * Class UploadedFileTest
- * @package Rayleigh\HttpMessage
+ * @package Rayleigh\HttpMessage\Tests
  */
 #[CoversClass(UploadedFile::class)]
 #[CoversClass(Stream::class)]

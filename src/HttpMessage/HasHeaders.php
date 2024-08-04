@@ -17,7 +17,7 @@ use Psr\Http\Message\MessageInterface;
 trait HasHeaders
 {
     /** @var HeaderBag $header_bag */
-    protected HeaderBag $header_bag = new HeaderBag();
+    protected HeaderBag $header_bag;
 
     public function getHeaders(): array
     {

@@ -17,7 +17,7 @@ use Rayleigh\HttpMessage\Stream;
 
 /**
  * Class StreamTest
- * @package Rayleigh\HttpMessage
+ * @package Rayleigh\HttpMessage\Tests
  */
 #[CoversClass(Stream::class)]
 final class StreamTest extends TestCase
@@ -157,13 +157,24 @@ final class StreamTest extends TestCase
     }
 
     #[Test]
-    public function testTell(): void
+    public function testSeek(): void
     {
-        $stream = new Stream('testTell');
+        $stream = new Stream('testSeek');
         self::assertSame(0, $stream->tell());
 
         $stream->seek(1);
         self::assertSame(1, $stream->tell());
+    }
+
+    #[Test]
+    public function testSeekFailed(): void
+    {
+        $resource = \fopen('php://stdout', 'r');
+        \assert(false !== $resource);
+        $stream = new Stream($resource);
+
+        $this->expectExceptionMessage('Stream is not seekable');
+        $stream->seek(1);
     }
 
     #[Test]
@@ -184,5 +195,154 @@ final class StreamTest extends TestCase
 
         $stream->close();
         self::assertFalse($stream->isSeekable());
+    }
+
+    #[Test]
+    public function testTellAlreadyDetached(): void
+    {
+        $stream = new Stream('');
+        $stream->detach();
+
+        $this->expectExceptionMessage('Stream is already detached');
+
+        $stream->tell();
+    }
+
+    #[Test]
+    public function testSeekAlreadyDetached(): void
+    {
+        $stream = new Stream('');
+        $stream->detach();
+
+        $this->expectExceptionMessage('Stream is already detached');
+
+        $stream->seek(1);
+    }
+
+    #[Test]
+    public function testIsWritable(): void
+    {
+        $stream = new Stream('testIsWritable');
+
+        self::assertTrue($stream->isWritable());
+    }
+
+    #[Test]
+    public function testWrite(): void
+    {
+        $stream = new Stream('testWrite');
+
+        $stream->write('AAA');
+
+        self::assertSame('AAAtWrite', (string) $stream);
+    }
+
+    #[Test]
+    public function testWriteAlreadyDetached(): void
+    {
+        $stream = new Stream('');
+        $stream->detach();
+
+        $this->expectExceptionMessage('Stream is already detached');
+
+        $stream->write('test');
+    }
+
+    #[Test]
+    public function testWriteIsNotWritable(): void
+    {
+        $resource = \fopen('php://memory', 'r');
+        \assert(false !== $resource);
+
+        $stream = new Stream($resource);
+
+        $this->expectExceptionMessage('Stream is not writable');
+
+        $stream->write('test');
+    }
+
+    #[Test]
+    public function testRead(): void
+    {
+        $stream = new Stream('ABCDEF');
+
+        $expected = $stream->read(3);
+
+        self::assertSame('ABC', $expected);
+    }
+
+    #[Test]
+    public function testReadAlreadyDetached(): void
+    {
+        $stream = new Stream('');
+        $stream->detach();
+
+        $this->expectExceptionMessage('Stream is already detached');
+
+        $stream->read(1);
+    }
+
+    #[Test]
+    public function testReadIsNotReadable(): void
+    {
+        $resource = \fopen('php://stdout', 'x');
+        \assert(false !== $resource);
+        $stream = new Stream($resource);
+
+        $this->expectExceptionMessage('Stream is not readable');
+
+        $stream->read(1);
+    }
+
+    #[Test]
+    public function testGetContentsAlreadyDetached(): void
+    {
+        $stream = new Stream('');
+        $stream->detach();
+
+        $this->expectExceptionMessage('Stream is already detached');
+
+        $stream->getContents();
+    }
+
+    #[Test]
+    public function testGetContentsHasError(): void
+    {
+        $resource = \fopen('php://stdout', 'x');
+        \assert(false !== $resource);
+        $stream = new Stream($resource);
+
+        $this->expectExceptionMessage('Stream is not readable');
+
+        $stream->getContents();
+    }
+
+    #[Test]
+    public function testGetMetadata(): void
+    {
+        $resource = \fopen('php://stdin', 'r');
+        \assert(false !== $resource);
+        $stream = new Stream($resource);
+
+        $expected = [
+            'timed_out' => false,
+            'blocked' => true,
+            'eof' => false,
+            'wrapper_type' => 'PHP',
+            'stream_type' => 'STDIO',
+            'mode' => 'r',
+            'unread_bytes' => 0,
+            'seekable' => false,
+            'uri' => 'php://stdin',
+        ];
+        $actual = $stream->getMetadata();
+
+        self::assertSame($expected, $actual);
+
+        self::assertSame('PHP', $stream->getMetadata('wrapper_type'));
+
+        $stream->close();
+
+        self::assertNull($stream->getMetadata('wrapper_type'));
     }
 }

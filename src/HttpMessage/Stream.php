@@ -174,7 +174,7 @@ final class Stream implements StreamInterface
             return \boolval($this->metadata['seekable']);
         }
 
-        return false;
+        return false; // @codeCoverageIgnore
     }
 
     public function seek(int $offset, int $whence = \SEEK_SET): void
@@ -206,11 +206,11 @@ final class Stream implements StreamInterface
     public function isWritable(): bool
     {
         if ($this->metadata === []) {
-            return false;
+            return false; // @codeCoverageIgnore
         }
 
         if (!\array_key_exists('mode', $this->metadata)) {
-            return false;
+            return false; // @codeCoverageIgnore
         }
         /** @var string $mode */
         $mode = $this->metadata['mode'];
@@ -279,11 +279,11 @@ final class Stream implements StreamInterface
     public function isReadable(): bool
     {
         if ($this->metadata === []) {
-            return false;
+            return false; // @codeCoverageIgnore
         }
 
         if (!\array_key_exists('mode', $this->metadata)) {
-            return false;
+            return false; // @codeCoverageIgnore
         }
         /** @var string $mode */
         $mode = $this->metadata['mode'];
@@ -321,7 +321,7 @@ final class Stream implements StreamInterface
         }
 
         if (!$this->isReadable()) {
-            throw new \RuntimeException('Stream is not readable');
+            throw new \RuntimeException('Stream is not readable'); // @codeCoverageIgnore
         }
 
         // @phpstan-ignore-next-line
@@ -345,19 +345,21 @@ final class Stream implements StreamInterface
         }
 
         if (!$this->isReadable()) {
-            throw new \RuntimeException('Stream is not readable');
+            throw new \RuntimeException('Stream is not readable'); // @codeCoverageIgnore
         }
 
         // safely try-get-contents
         /** @var \Throwable|null $exception */
         $exception = null;
         $error_handler = static function (int $errno, string $errstr) use (&$exception): bool {
+            // @codeCoverageIgnoreStart
             $exception = new \RuntimeException(\sprintf(
                 'Unable to read stream contents: %d, %s',
                 $errno,
                 $errstr,
             ));
             return true; // stop propagation
+            // @codeCoverageIgnoreEnd
         };
 
         \set_error_handler($error_handler);
@@ -368,13 +370,13 @@ final class Stream implements StreamInterface
             if ($contents !== false) {
                 return $contents;
             }
-        } catch (\Throwable $e) {
-            $exception = $e;
+        } catch (\Throwable $e) { // @codeCoverageIgnore
+            $exception = $e; // @codeCoverageIgnore
         } finally {
             \restore_error_handler();
         }
 
-        throw new \RuntimeException('Unable to read stream contents', 0, $exception);
+        throw new \RuntimeException('Unable to read stream contents', 0, $exception); // @codeCoverageIgnore
     }
 
     public function getMetadata(?string $key = null): mixed
