@@ -59,6 +59,7 @@
   "require-dev": {
     "ext-pdo_mysql": "*",
     "cakephp/chronos": "^3.0.0",
+    "monolog/monolog": "^3.7.0",
     "nesbot/carbon": "^3.0.0",
     "phpstan/phpstan": "^1.11.8",
     "phpunit/phpunit": "^11.2.9"
