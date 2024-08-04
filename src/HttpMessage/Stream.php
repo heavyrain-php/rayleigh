@@ -41,7 +41,7 @@ final class Stream implements StreamInterface
      * WARNING: It is mutable
      * @var null|int
      */
-    private ?int $cachedSize = null;
+    private ?int $cached_size = null;
 
     /**
      * Constructor
@@ -108,15 +108,15 @@ final class Stream implements StreamInterface
         $detachedStream = $this->stream;
         unset($this->stream);
         $this->metadata = [];
-        $this->cachedSize = null;
+        $this->cached_size = null;
         return $detachedStream;
     }
 
     public function getSize(): ?int
     {
         // size may be cached
-        if ($this->cachedSize !== null) {
-            return $this->cachedSize;
+        if ($this->cached_size !== null) {
+            return $this->cached_size;
         }
 
         if (!isset($this->stream)) {
@@ -134,8 +134,8 @@ final class Stream implements StreamInterface
         if ($stats === false || !\array_key_exists('size', $stats)) {
             return null; // @codeCoverageIgnore
         }
-        $this->cachedSize = $stats['size'];
-        return $this->cachedSize;
+        $this->cached_size = $stats['size'];
+        return $this->cached_size;
     }
 
     public function tell(): int
@@ -261,7 +261,7 @@ final class Stream implements StreamInterface
         }
 
         // write causes to change size
-        $this->cachedSize = null;
+        $this->cached_size = null;
 
         $result = @\fwrite($this->stream, $string);
         if ($result === false) {
