@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 /**
- * Class Logger
- * @package Rayleigh\Log\Writers
  * @author Masaru Yamagishi <akai_inu@live.jp>
  * @license Apache-2.0
  */
@@ -17,7 +15,9 @@ use Monolog\Level;
 use Monolog\Logger;
 
 /**
+ * Class MonologWriter
  * Use monolog/monolog as writer
+ * @package Rayleigh\Log\Writers
  * @see https://github.com/Seldaek/monolog/
  *
  * ```php

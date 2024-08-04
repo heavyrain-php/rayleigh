@@ -10,17 +10,17 @@ declare(strict_types=1);
 namespace Rayleigh\Log;
 
 /**
- * Write log message to anywhere
+ * Format log message
  * @package Rayleigh\Log
  */
-interface WriterInterface
+interface FormatterInterface
 {
     /**
-     * Write log message
+     * Format log message
      * @param Rfc5424LogLevel $log_level log level
      * @param string $message Message line
      * @param array<array-key, mixed> $context Message context
-     * @return void
+     * @return string formatted message
      */
-    function write(Rfc5424LogLevel $log_level, string $message, array $context): void;
+    function format(Rfc5424LogLevel $log_level, string $message, array $context): string;
 }
