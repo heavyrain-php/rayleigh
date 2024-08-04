@@ -62,6 +62,7 @@ use Stringable;
             throw new \RuntimeException("Logger instance is not set");
         }
 
+        // @phpstan-ignore return.type
         return self::$global_instance;
     }
 
