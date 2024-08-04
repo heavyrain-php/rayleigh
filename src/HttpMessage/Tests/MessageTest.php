@@ -10,8 +10,12 @@ declare(strict_types=1);
 namespace Rayleigh\HttpMessage\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Rayleigh\HttpMessage\HasBody;
+use Rayleigh\HttpMessage\HasHeaders;
+use Rayleigh\HttpMessage\HasProtocolVersion;
 use Rayleigh\HttpMessage\HeaderBag;
 use Rayleigh\HttpMessage\Message;
 use Rayleigh\HttpMessage\Stream;
@@ -23,6 +27,9 @@ use Rayleigh\HttpMessage\Stream;
 #[CoversClass(Message::class)]
 #[CoversClass(Stream::class)]
 #[CoversClass(HeaderBag::class)]
+#[CoversTrait(HasBody::class)]
+#[CoversTrait(HasHeaders::class)]
+#[CoversTrait(HasProtocolVersion::class)]
 final class MessageTest extends TestCase
 {
     #[Test]

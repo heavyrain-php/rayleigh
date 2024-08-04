@@ -10,8 +10,12 @@ declare(strict_types=1);
 namespace Rayleigh\HttpMessage\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Rayleigh\HttpMessage\HasMethod;
+use Rayleigh\HttpMessage\HasRequestTarget;
+use Rayleigh\HttpMessage\HasUri;
 use Rayleigh\HttpMessage\HeaderBag;
 use Rayleigh\HttpMessage\Internal\UriPartsParser;
 use Rayleigh\HttpMessage\Request;
@@ -27,6 +31,9 @@ use Rayleigh\HttpMessage\Uri;
 #[CoversClass(Stream::class)]
 #[CoversClass(UriPartsParser::class)]
 #[CoversClass(Uri::class)]
+#[CoversTrait(HasMethod::class)]
+#[CoversTrait(HasRequestTarget::class)]
+#[CoversTrait(HasUri::class)]
 final class RequestTest extends TestCase
 {
     #[Test]

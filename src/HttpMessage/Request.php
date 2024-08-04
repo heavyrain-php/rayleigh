@@ -16,9 +16,8 @@ use Psr\Http\Message\StreamInterface;
 /**
  * PSR-7 Request implementation
  * @package Rayleigh\HttpMessage
- * @final
  */
-/* final readonly */ class Request extends Message implements RequestInterface
+class Request extends Message implements RequestInterface
 {
     use HasMethod;
     use HasRequestTarget;
@@ -40,14 +39,11 @@ use Psr\Http\Message\StreamInterface;
         mixed $body = null,
         string $protocol_version = '1.1',
     ) {
-        parent::__construct();
+        parent::__construct($headers);
 
         // case-sensitive
         $this->method = $method;
         $this->uri = $uri instanceof UriInterface ? $uri : new Uri($uri);
-        foreach ($headers as $name => $value) {
-            $this->header_bag->add($name, $value);
-        }
         $this->protocol_version = $protocol_version;
         if ($body !== null && $body !== '') {
             $this->body = new Stream($body);

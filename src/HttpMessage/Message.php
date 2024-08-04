@@ -21,9 +21,13 @@ abstract class Message implements MessageInterface
     use HasHeaders;
     use HasProtocolVersion;
 
-    public function __construct()
+    /**
+     * @param array<string, mixed> $headers
+     * @return void
+     */
+    public function __construct(array $headers = [])
     {
-        $this->header_bag = new HeaderBag();
+        $this->header_bag = new HeaderBag($headers);
     }
 
     public function __clone()
