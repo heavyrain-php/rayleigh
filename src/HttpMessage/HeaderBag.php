@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Rayleigh\HttpMessage;
 
 use InvalidArgumentException;
+use Psr\Http\Message\UriInterface;
 
 /**
  * PSR-7 Message about HTTP Header list
@@ -35,6 +36,34 @@ final class HeaderBag
         foreach ($headers as $name => $value) {
             $this->add($name, $value);
         }
+    }
+
+    /**
+     * Update Host header from Uri
+     * @param UriInterface $uri
+     * @param bool $force
+     * @return void
+     */
+    public function updateHostHeaderFromUri(UriInterface $uri, bool $force = false): void
+    {
+        if ($this->has('Host') && $force === false) {
+            return;
+        }
+        $host = $uri->getHost();
+        if ($host === '') {
+            // No host
+            return;
+        }
+        $port = $uri->getPort();
+        if ($port !== null) {
+            $host .= ':' . $port;
+        }
+
+        $name = $this->formatName('Host');
+        $value = $this->formatValue($host);
+
+        // Host header must be first
+        $this->headers = [$name => $value] + $this->headers;
     }
 
     /**

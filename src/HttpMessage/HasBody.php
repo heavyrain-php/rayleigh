@@ -17,7 +17,7 @@ use Psr\Http\Message\StreamInterface;
  */
 trait HasBody
 {
-    protected ?StreamInterface $stream = null;
+    protected ?StreamInterface $body = null;
 
     /**
      * Get body stream
@@ -25,12 +25,12 @@ trait HasBody
      */
     public function getBody(): StreamInterface
     {
-        if ($this->stream === null) {
-            $this->stream = new Stream(''); // empty body
+        if ($this->body === null) {
+            $this->body = new Stream(''); // empty body
         }
 
         // returns stream instance reference
-        return $this->stream;
+        return $this->body;
     }
 
     /**
@@ -41,7 +41,7 @@ trait HasBody
     public function withBody(StreamInterface $stream): MessageInterface
     {
         $new_instance = clone $this;
-        $new_instance->stream = $stream;
+        $new_instance->body = $stream;
 
         return $new_instance;
     }
