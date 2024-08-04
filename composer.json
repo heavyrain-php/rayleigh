@@ -11,7 +11,7 @@
   "homepage": "https://heavyrain-php.github.io/rayleigh/",
   "readme": "README.md",
   "license": "Apache-2.0",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "autoload": {
     "psr-4": {
       "Rayleigh\\": "src/"

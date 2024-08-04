@@ -2,7 +2,7 @@
   "$schema": "https://getcomposer.org/schema.json",
   "name": "rayleigh/http-server",
   "description": "S.S.S. Rayleigh Framework - HTTP Server Component",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "type": "library",
   "keywords": [
     "rayleigh",
