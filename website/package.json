@@ -1,0 +1,22 @@
+{
+  "name": "rayleigh-website",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "keywords": [],
+  "author": {
+    "email": "m.yamagishi90@gmail.com",
+    "name": "Masaru Yamagishi",
+    "url": "https://cafe-capy.net"
+  },
+  "license": "Apache-2.0",
+  "description": "",
+  "devDependencies": {
+    "vitepress": "^1.3.1"
+  }
+}
