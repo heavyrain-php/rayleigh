@@ -22,22 +22,22 @@ use RuntimeException;
  *
  * ```php
  * // You can fix request time in HTTP middleware
- * GlobalClock::setGlobalClock(new \DateTimeImmutable("now"));
+ * FixedClock::setFixedClock(new \DateTimeImmutable("now"));
  *
  * $response = $next($request);
  *
  * // Clear global time for the rest of process
- * GlobalClock::clearGlobalClock();
+ * FixedClock::clearFixedClock();
  *
  * return $response;
  * ```
  */
-class GlobalClock implements ClockInterface
+class FixedClock implements ClockInterface
 {
     use AsCarbonImmutableTrait;
     use AsChronosTrait;
 
-    protected static ?GlobalClock $global_instance = null;
+    protected static ?FixedClock $global_instance = null;
 
     private function __construct(
         private readonly ClockInterface $instance,
@@ -53,24 +53,24 @@ class GlobalClock implements ClockInterface
      * @param bool|null $force            Overwrite global clock
      * @return void
      */
-    public static function setGlobalClock(ClockInterface $instance, ?DateTimeZone $timezone = null, ?bool $force = false): void
+    public static function setFixedClock(ClockInterface $instance, ?DateTimeZone $timezone = null, ?bool $force = false): void
     {
         if ($force === false && static::$global_instance !== null) {
-            throw new RuntimeException("Global clock is already set");
+            throw new RuntimeException("Fixed clock is already set");
         }
 
-        static::$global_instance = new GlobalClock($instance, $timezone);
+        static::$global_instance = new FixedClock($instance, $timezone);
     }
 
     /**
      * Get global static-variable Clock
-     * @return GlobalClock
+     * @return FixedClock
      * @throws RuntimeException when global clock is not set
      */
-    public static function getGlobalClock(): GlobalClock
+    public static function getFixedClock(): FixedClock
     {
         if (static::$global_instance === null) {
-            throw new RuntimeException("Global clock is not set");
+            throw new RuntimeException("Fixed clock is not set");
         }
 
         return static::$global_instance;
@@ -80,7 +80,7 @@ class GlobalClock implements ClockInterface
      * Clear global static-variable Clock
      * @return void
      */
-    public static function clearGlobalClock(): void
+    public static function clearFixedClock(): void
     {
         static::$global_instance = null;
     }

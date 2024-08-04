@@ -24,14 +24,14 @@ if (!\function_exists('system_now')) {
     }
 }
 
-if (!\function_exists('global_now')) {
+if (!\function_exists('fixed_now')) {
     /**
      * Get global expected time
      * @return DateTimeImmutable
      * @throws \RuntimeException when global clock is not set
      */
-    function global_now(): DateTimeImmutable
+    function fixed_now(): DateTimeImmutable
     {
-        return GlobalClock::getGlobalClock()->now();
+        return FixedClock::getFixedClock()->now();
     }
 }
