@@ -35,7 +35,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $protocol_version
      * @param array<string, mixed> $server_params
      * @param array<string, string> $cookie_params
-     * @param array<array-key, string> $query_params
+     * @param array<array-key, mixed> $query_params
      * @param array<string, UploadedFileInterface> $uploaded_files
      * @param array<array-key, mixed>|object|null $parsed_body
      * @param array<array-key, mixed> $attributes
