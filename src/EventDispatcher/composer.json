@@ -1,0 +1,53 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "rayleigh/event-dispatcher",
+  "description": "S.S.S. Rayleigh Framework - EventDispatcher Component",
+  "version": "0.0.1",
+  "type": "library",
+  "keywords": [
+    "rayleigh",
+    "event",
+    "dispatcher",
+    "psr14"
+  ],
+  "homepage": "https://heavyrain-php.github.io/rayleigh/",
+  "readme": "README.md",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Masaru Yamagishi",
+      "email": "akai_inu@live.jp",
+      "homepage": "https://cafe-capy.net",
+      "role": "Author"
+    }
+  ],
+  "support": {
+    "docs": "https://heavyrain-php.github.io/rayleigh/",
+    "issues": "https://github.com/heavyrain-php/rayleigh/issues",
+    "source": "https://github.com/heavyrain-php/rayleigh/"
+  },
+  "provide": {
+    "psr/event-dispatcher-implementation": "1.0"
+  },
+  "require": {
+    "php": "~8.1.0|~8.2.0|~8.3.0",
+    "psr/event-dispatcher": "^1.0.0"
+  },
+  "require-dev": {},
+  "suggest": {},
+  "autoload": {
+    "psr-4": {
+      "Rayleigh\\EventDispatcher\\": ""
+    },
+    "exclude-from-classmap": [
+      "Tests/"
+    ]
+  },
+  "scripts": {},
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
