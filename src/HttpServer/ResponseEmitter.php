@@ -24,8 +24,7 @@ final /* readonly */ class ResponseEmitter
      */
     public function __construct(
         private readonly Emitter $emitter,
-    ) {
-    }
+    ) {}
 
     /**
      * Emit header and body
@@ -47,21 +46,7 @@ final /* readonly */ class ResponseEmitter
      */
     public function terminate(): void
     {
-        if (!$this->emitter->hasSentHeader()) {
-            throw new RuntimeException('Header has not been sent yet');
-        }
-
-        if (\function_exists('fastcgi_finish_request')) {
-            // fastcgi
-            \fastcgi_finish_request();
-        } elseif (\function_exists('litespeed_finish_request')) {
-            // litespeed
-            \litespeed_finish_request();
-        } elseif (!\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
-            // cli
-            \ob_end_flush();
-            \flush();
-        }
+        $this->emitter->terminateResponse();
     }
 
     /**
@@ -84,11 +69,12 @@ final /* readonly */ class ResponseEmitter
     {
         $status_code = $response->getStatusCode();
         $informational_response = $status_code >= 100 && $status_code < 200;
-        if ($informational_response && !\function_exists('headers_send')) {
-            // Skip when SAPI does not support headers_send
+        if ($informational_response && \function_exists('headers_sent') === false) {
+            // Skip when SAPI does not support headers_sent
             return;
         }
 
+        /** @var string $name Fixes PSR-7 definition */
         foreach ($response->getHeaders() as $name => $value) {
             $name = \ucwords($name, '-');
             $replace = $name !== 'Set-Cookie'; // Do not replace only Set-Cookie

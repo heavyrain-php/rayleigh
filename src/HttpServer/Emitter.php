@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @author Masaru Yamagishi <akai_inu@live.jp>
  * @license Apache-2.0
+ * @codeCoverageIgnoreFile because all of methods are wrapper of PHP built-in functions
  */
 
 namespace Rayleigh\HttpServer;
@@ -12,11 +13,31 @@ namespace Rayleigh\HttpServer;
 use Stringable;
 
 /**
- * Header and body emitter
+ * Header and body emitter function wrapper
  * @package Rayleigh\HttpServer
  */
-final /* readonly */ class Emitter
+/* final readonly */ class Emitter
 {
+    /**
+     * Terminate response
+     * @return void
+     */
+    public function terminateResponse(): void
+    {
+        if (!$this->hasSentHeader()) {
+            throw new \RuntimeException('Header has not been sent yet');
+        }
+
+        if (\function_exists('fastcgi_finish_request')) {
+            // fastcgi
+            \fastcgi_finish_request();
+        } elseif (!\in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+            // cli
+            \ob_end_flush();
+            \flush();
+        }
+    }
+
     /**
      * Header has sent or not
      * @return bool

@@ -21,15 +21,21 @@ use RuntimeException;
 /**
  * PSR-7 ServerRequest builds from global variables
  * @package Rayleigh\HttpServer
+ * @link https://github.com/laminas/laminas-diactoros/blob/3.4.x/src/ServerRequestFactory.php
+ * @example
+ * ```php
+ * $middlewares = [snip...];
+ * $server_request = TraditionalServerRequestBuilder::build();
+ * $response = (new ServerRequestRunner($middlewares))->handle($server_request);
+ * (new ResponseEmitter(new Emitter()))->emit($response);
+ * ```
  */
 final /* readonly */ class TraditionalServerRequestBuilder
 {
     /**
      * This class cannot be instantiated
      */
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     /**
      * Build ServerRequest from global variables
@@ -55,7 +61,7 @@ final /* readonly */ class TraditionalServerRequestBuilder
             case 'POST':
             case 'PUT':
             case 'DELETE':
-                if (!\array_key_exists('CONTENT_TYPE', $server)) {
+                if (\array_key_exists('CONTENT_TYPE', $server) === false) {
                     $server['CONTENT_TYPE'] = 'application/x-www-form-urlencoded'; // Override default content type
                 }
                 break;
@@ -70,7 +76,7 @@ final /* readonly */ class TraditionalServerRequestBuilder
             method: $method,
             uri: self::generateUri($server),
             headers: self::generateHeaders($server),
-            body: self::generateBody($method, $server),
+            body: self::generateBody($method),
             protocol_version: self::generateProtocolVersion($server),
             server_params: $server,
             cookie_params: self::generateCookieParams($cookie),
@@ -107,7 +113,7 @@ final /* readonly */ class TraditionalServerRequestBuilder
     }
 
     /**
-     *
+     * find and satisfies the value is string
      * @param array<string, scalar> $str
      * @param string $key
      * @return null|string
@@ -156,25 +162,26 @@ final /* readonly */ class TraditionalServerRequestBuilder
     /**
      * Generate headers from $_SERVER['HTTP_*']
      * @param array<string, scalar> $server
-     * @return array<string, mixed>
+     * @return array<string, scalar[]>
      */
     private static function generateHeaders(array $server): array
     {
         $headers = [];
 
-        if ($contentType = self::findStringFromArray($server, 'CONTENT_TYPE')) {
-            $headers['Content-Type'] = $contentType;
+        if ($content_type = self::findStringFromArray($server, 'CONTENT_TYPE')) {
+            $headers['Content-Type'] = [$content_type];
         }
-        if ($contentLength = self::findStringFromArray($server, 'CONTENT_LENGTH')) {
-            $headers['Content-Length'] = $contentLength;
-        }
-        if ($contentMd5 = self::findStringFromArray($server, 'HTTP_CONTENT_MD5')) {
-            $headers['Content-MD5'] = $contentMd5;
+        if ($content_length = self::findStringFromArray($server, 'CONTENT_LENGTH')) {
+            $headers['Content-Length'] = [$content_length];
         }
 
         foreach ($server as $key => $value) {
             if (\str_starts_with($key, 'HTTP_')) {
-                $headers[\ucwords(\strtolower(\str_replace('_', '-', \substr($key, 5))))] = $value;
+                $header_name = \ucwords(\strtolower(\str_replace('_', '-', \substr($key, 5))));
+                if (\array_key_exists($header_name, $headers) === false) {
+                    $headers[$header_name] = [];
+                }
+                $headers[$header_name][] = $value;
             }
         }
 
@@ -183,16 +190,15 @@ final /* readonly */ class TraditionalServerRequestBuilder
 
     /**
      * @param string $method
-     * @param array<string, scalar> $server
      * @return resource|null
      */
-    private static function generateBody(string $method, array $server): mixed
+    private static function generateBody(string $method): mixed
     {
         $body = match (\strtoupper($method)) {
             'POST', 'PUT', 'DELETE', 'PATCH' => \fopen('php://input', 'r'),
             default => null,
         };
-        \assert($body === null || \is_resource($body));
+        \assert($body === null || \is_resource($body)); // for phpstan
         return $body;
     }
 
@@ -203,7 +209,7 @@ final /* readonly */ class TraditionalServerRequestBuilder
     private static function generateProtocolVersion(array $server): string
     {
         $server_protocol = self::findStringFromArray($server, 'SERVER_PROTOCOL');
-        if (\is_string($server_protocol) && \str_starts_with($server_protocol, 'HTTP/')) {
+        if ($server_protocol !== null && \str_starts_with($server_protocol, 'HTTP/')) {
             return \substr($server_protocol, 5);
         }
         throw new RuntimeException(\sprintf('Unknown server protocol: %s', $server_protocol));
@@ -251,9 +257,9 @@ final /* readonly */ class TraditionalServerRequestBuilder
         $uploaded_files = [];
         foreach ($files as $name => $file) {
             $uploaded_files[$name] = new UploadedFile(
-                $file['tmp_name'] ?? throw new RuntimeException('tmp_name is required'),
+                $file['tmp_name'] ?? throw new RuntimeException('$_FILES tmp_name is required'),
                 $file['size'],
-                $file['error'] ?? throw new RuntimeException('error is required'),
+                $file['error'] ?? throw new RuntimeException('$_FILES error is required'),
                 $file['name'],
                 $file['type'],
             );
