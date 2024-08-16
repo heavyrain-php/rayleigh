@@ -22,5 +22,5 @@ interface FormatterInterface
      * @param array<array-key, mixed> $context Message context
      * @return string formatted message
      */
-    function format(Rfc5424LogLevel $log_level, string $message, array $context): string;
+    public function format(Rfc5424LogLevel $log_level, string $message, array $context): string;
 }

@@ -25,8 +25,7 @@ final class AsCarbonImmutableTraitTest extends TestCase
     #[Test]
     public function testAsCarbonImmutable(): void
     {
-        $clock = new class implements ClockInterface
-        {
+        $clock = new class implements ClockInterface {
             use AsCarbonImmutableTrait;
 
             public function now(): DateTimeImmutable

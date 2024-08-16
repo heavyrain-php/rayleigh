@@ -60,5 +60,5 @@ trait HasRequestTarget
      * Get request URI
      * @return UriInterface
      */
-    public abstract function getUri(): UriInterface;
+    abstract public function getUri(): UriInterface;
 }

@@ -27,8 +27,7 @@ class JsonLineFormatter implements FormatterInterface
     public function __construct(
         private readonly int $json_flags = \JSON_UNESCAPED_UNICODE,
         private readonly string $line_endings = \PHP_EOL,
-    ) {
-    }
+    ) {}
 
     public function format(Rfc5424LogLevel $log_level, string $message, array $context): string
     {

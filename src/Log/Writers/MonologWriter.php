@@ -30,9 +30,7 @@ use Monolog\Logger;
  */
 class MonologWriter implements WriterInterface
 {
-    public function __construct(private readonly Logger $logger)
-    {
-    }
+    public function __construct(private readonly Logger $logger) {}
 
     /**
      * Get Monolog instance

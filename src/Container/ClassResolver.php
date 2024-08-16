@@ -32,8 +32,7 @@ final class ClassResolver
      */
     public function __construct(
         private readonly ContainerInterface $container,
-    ) {
-    }
+    ) {}
 
     /**
      * Resolves a class name to an object.

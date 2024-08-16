@@ -17,6 +17,5 @@ final class StubClass
         float $b,
         int $c = 1,
         ...$d,
-    ) {
-    }
+    ) {}
 }

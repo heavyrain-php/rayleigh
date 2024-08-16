@@ -81,7 +81,7 @@ use Stringable;
     public function log(mixed $level, string|Stringable $message, array $context = []): void
     {
         foreach ($this->writers as $writer) {
-            $writer->write(Rfc5424LogLevel::fromMixed($level), (string)$message, $context);
+            $writer->write(Rfc5424LogLevel::fromMixed($level), (string) $message, $context);
         }
     }
 }

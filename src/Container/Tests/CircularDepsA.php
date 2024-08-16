@@ -14,6 +14,5 @@ final class CircularDepsA
     public function __construct(
         // @phpstan-ignore property.onlyWritten
         private readonly CircularDepsB $b,
-    ) {
-    }
+    ) {}
 }

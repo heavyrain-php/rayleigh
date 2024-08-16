@@ -34,10 +34,9 @@ final class FixedClockTest extends TestCase
     }
 
     #[Test]
-    public final function testSetFixedClock(): void
+    final public function testSetFixedClock(): void
     {
-        $clock = new class implements ClockInterface
-        {
+        $clock = new class implements ClockInterface {
             public function now(): DateTimeImmutable
             {
                 return new DateTimeImmutable("2021-01-01 00:00:00");
@@ -50,10 +49,9 @@ final class FixedClockTest extends TestCase
     }
 
     #[Test]
-    public final function testSetFixedClockWithTimezone(): void
+    final public function testSetFixedClockWithTimezone(): void
     {
-        $clock = new class implements ClockInterface
-        {
+        $clock = new class implements ClockInterface {
             public function now(): DateTimeImmutable
             {
                 return new DateTimeImmutable("2021-01-01 00:00:00");
@@ -67,10 +65,9 @@ final class FixedClockTest extends TestCase
     }
 
     #[Test]
-    public final function testSetFixedClockWithNotForce(): void
+    final public function testSetFixedClockWithNotForce(): void
     {
-        $clock = new class implements ClockInterface
-        {
+        $clock = new class implements ClockInterface {
             public function now(): DateTimeImmutable
             {
                 return new DateTimeImmutable("2021-01-01 00:00:00");
@@ -82,7 +79,7 @@ final class FixedClockTest extends TestCase
     }
 
     #[Test]
-    public final function testFailedToGetFixedClock(): void
+    final public function testFailedToGetFixedClock(): void
     {
         self::expectExceptionMessage("Fixed clock is not set");
         FixedClock::getFixedClock();

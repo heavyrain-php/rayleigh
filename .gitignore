@@ -3,3 +3,4 @@ coverage/
 vendor/
 composer.lock
 *.phar
+.php-cs-fixer.cache

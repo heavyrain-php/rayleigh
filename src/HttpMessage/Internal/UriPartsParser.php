@@ -100,7 +100,7 @@ final class UriPartsParser
 
         $encodedUrl = \preg_replace_callback(
             '%[^:/@?&=#]+%usD', // multibyte characters
-            static fn (array $matches): string => \urlencode($matches[0]),
+            static fn(array $matches): string => \urlencode($matches[0]),
             $urlMayExceptPrefix,
         );
 
@@ -111,7 +111,7 @@ final class UriPartsParser
         }
 
         return \array_map(
-            static fn (string|int $value): string => \urldecode((string)$value),
+            static fn(string|int $value): string => \urldecode((string) $value),
             $parseResult,
         );
     }
@@ -208,7 +208,7 @@ final class UriPartsParser
         $result = \preg_replace_callback(
             // safe characters or percent-encoded characters
             '/(?:[^' . self::UNRESERVED_CHARACTERS . self::SUB_DELIMS_CHARACTERS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
-            static fn (array $matches): string => \rawurlencode($matches[0]),
+            static fn(array $matches): string => \rawurlencode($matches[0]),
             $str,
         );
 

@@ -17,6 +17,4 @@ use InvalidArgumentException;
  * Seriously malformed URI has provided
  * @package Rayleigh\HttpMessage
  */
-class MalformedUriException extends InvalidArgumentException
-{
-}
+class MalformedUriException extends InvalidArgumentException {}

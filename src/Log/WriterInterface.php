@@ -22,5 +22,5 @@ interface WriterInterface
      * @param array<array-key, mixed> $context Message context
      * @return void
      */
-    function write(Rfc5424LogLevel $log_level, string $message, array $context): void;
+    public function write(Rfc5424LogLevel $log_level, string $message, array $context): void;
 }

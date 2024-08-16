@@ -35,9 +35,7 @@ final class MessageTest extends TestCase
     #[Test]
     public function testProtocolVersion(): void
     {
-        $message = new class extends Message
-        {
-        };
+        $message = new class extends Message {};
 
         self::assertSame('1.1', $message->getProtocolVersion());
 
@@ -51,9 +49,7 @@ final class MessageTest extends TestCase
     #[Test]
     public function testBody(): void
     {
-        $message = new class extends Message
-        {
-        };
+        $message = new class extends Message {};
 
         self::assertSame('', (string) $message->getBody());
 
@@ -67,9 +63,7 @@ final class MessageTest extends TestCase
     #[Test]
     public function testHeaders(): void
     {
-        $message = new class extends Message
-        {
-        };
+        $message = new class extends Message {};
 
         self::assertSame([], $message->getHeaders());
         self::assertFalse($message->hasHeader('Host'));

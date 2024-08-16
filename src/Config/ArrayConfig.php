@@ -19,8 +19,7 @@ final /* readonly */ class ArrayConfig implements Config
      */
     public function __construct(
         private readonly array $config,
-    ) {
-    }
+    ) {}
 
     public function getString(string $key): string
     {

@@ -82,8 +82,7 @@ final class ContainerTest extends TestCase
         self::assertFalse($container->has('non-existing id'));
 
         // Callable instance
-        $container->bind('callable instance', new class
-        {
+        $container->bind('callable instance', new class {
             public function __invoke(): string
             {
                 return 'world';
