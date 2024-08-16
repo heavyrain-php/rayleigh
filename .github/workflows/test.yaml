@@ -79,6 +79,14 @@ jobs:
       - name: Install phive tools
         run: phive install --copy --trust-gpg-keys E82B2FB314E9906E,51C67305FFC2E5C0,12CE0F1D262429A5
 
+      - name: Install composer dependencies
+        run: |-
+          for dir in $(find src -type d); do
+            if [ -f "$dir/composer.json" ]; then
+              composer install --working-dir=$dir --no-progress --ansi --prefer-dist
+            fi
+          done
+
       - name: Run PHPUnit
         run: composer test
 
