@@ -29,23 +29,23 @@ trait HasAttributes
         return $this->attributes;
     }
 
-    public function getAttribute(string $attribute, mixed $default = null): mixed
+    public function getAttribute(string $name, mixed $default = null): mixed
     {
-        return $this->attributes[$attribute] ?? $default;
+        return $this->attributes[$name] ?? $default;
     }
 
-    public function withAttribute(string $attribute, mixed $value): ServerRequestInterface
+    public function withAttribute(string $name, mixed $value): ServerRequestInterface
     {
         $new_instance = clone $this;
-        $new_instance->attributes[$attribute] = $value;
+        $new_instance->attributes[$name] = $value;
 
         return $new_instance;
     }
 
-    public function withoutAttribute(string $attribute): ServerRequestInterface
+    public function withoutAttribute(string $name): ServerRequestInterface
     {
         $new_instance = clone $this;
-        unset($new_instance->attributes[$attribute]);
+        unset($new_instance->attributes[$name]);
 
         return $new_instance;
     }

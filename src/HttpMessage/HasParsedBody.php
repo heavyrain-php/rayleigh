@@ -31,17 +31,17 @@ trait HasParsedBody
 
     /**
      * With parsed body
-     * @param mixed $parsed_body
+     * @param mixed $data
      * @return ServerRequestInterface
      */
-    public function withParsedBody(mixed $parsed_body): ServerRequestInterface
+    public function withParsedBody(mixed $data): ServerRequestInterface
     {
         $new_instance = clone $this;
 
-        if (!\is_array($parsed_body) && !\is_object($parsed_body) && $parsed_body !== null) {
+        if (!\is_array($data) && !\is_object($data) && $data !== null) {
             throw new \InvalidArgumentException('Invalid parsed body');
         }
-        $new_instance->parsed_body = $parsed_body;
+        $new_instance->parsed_body = $data;
 
         return $new_instance;
     }

@@ -44,7 +44,7 @@
     "source": "https://github.com/heavyrain-php/rayleigh/"
   },
   "require": {
-    "php": "~8.1.0|~8.2.0|~8.3.0",
+    "php": "~8.2.0|~8.3.0",
     "ext-pdo": "*",
     "psr/cache": "^3.0.0",
     "psr/clock": "^1.0.0",
@@ -63,11 +63,14 @@
     "cakephp/chronos": "^3.0.0",
     "monolog/monolog": "^3.7.0",
     "nesbot/carbon": "^3.0.0",
-    "phpstan/phpstan": "^1.11.8",
     "phpunit/phpunit": "^11.2.9"
   },
   "scripts": {
-    "lint": "phpstan analyse src",
+    "lint": [
+      "./tools/phpstan analyse src",
+      "./tools/psalm"
+    ],
+    "fix": "./tools/php-cs-fixer fix",
     "test": "phpunit",
     "coverage": "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-html=coverage",
     "coverage-html": "php -S localhost:8080 -t coverage"

@@ -35,13 +35,13 @@ trait HasBody
 
     /**
      * With new body stream
-     * @param StreamInterface $stream
+     * @param StreamInterface $body
      * @return MessageInterface new instance
      */
-    public function withBody(StreamInterface $stream): MessageInterface
+    public function withBody(StreamInterface $body): MessageInterface
     {
         $new_instance = clone $this;
-        $new_instance->body = $stream;
+        $new_instance->body = $body;
 
         return $new_instance;
     }

@@ -39,12 +39,12 @@ final /* readonly */ class TraditionalServerRequestBuilder
 
     /**
      * Build ServerRequest from global variables
-     * @param array<string, scalar> $server
-     * @param array<string, scalar> $cookie
-     * @param array<string, array{name: ?string, type: ?string, size: ?int, tmp_name: ?string, error: ?int, full_path: ?string}> $files
-     * @param array<string, scalar> $get
-     * @param array<string, scalar> $post
-     * @param array<string, scalar> $request
+     * @param array<non-empty-string, scalar> $server
+     * @param array<non-empty-string, scalar> $cookie
+     * @param array<non-empty-string, array{name: ?string, type: ?string, size: ?int, tmp_name: ?string, error: ?int, full_path: ?string}> $files
+     * @param array<non-empty-string, scalar> $get
+     * @param array<non-empty-string, scalar> $post
+     * @param array<non-empty-string, scalar> $request
      * @return ServerRequestInterface
      * @throws MalformedUriException
      */

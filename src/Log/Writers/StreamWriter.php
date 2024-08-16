@@ -24,7 +24,7 @@ class StreamWriter implements WriterInterface
      * @param resource $resource
      */
     public function __construct(
-        protected readonly mixed $resource,
+        protected mixed $resource,
         protected readonly FormatterInterface $formatter,
     ) {
         if (!\is_resource($this->resource)) {

@@ -23,7 +23,7 @@ final /* readonly */ class ServerRequestFactory implements ServerRequestFactoryI
      * {@inheritDoc}
      * @param string $method
      * @param \Psr\Http\Message\UriInterface|string $uri
-     * @param array<string, scalar> $serverParams
+     * @param array<array-key, mixed> $serverParams
      * @return ServerRequestInterface
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface

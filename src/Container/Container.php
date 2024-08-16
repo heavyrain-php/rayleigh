@@ -51,7 +51,7 @@ final class Container implements ContainerInterface
         unset($this->resolvers[$id]);
     }
 
-    public function get(string $id)
+    public function get(string $id): mixed
     {
         $resolver = $id;
         if ($this->has($id)) {
@@ -63,18 +63,29 @@ final class Container implements ContainerInterface
         // 1. Concrete object
         if (\is_object($resolver)) {
             // returns the instanced object
+            /**
+             * @psalm-suppress InvalidReturnStatement
+             * @phpstan-ignore-next-line
+             */
             return $resolver;
         }
 
         // 2. Existing class
         if (\is_string($resolver) && \class_exists($resolver)) {
             // instances the class and returns it
+            /**
+             * @psalm-suppress InvalidReturnStatement
+             * @phpstan-ignore-next-line
+             */
             return $this->class_resolver->resolve($resolver);
         }
 
         // 3. Scalar
         if ($this->has($id)) {
             // returns the scalar or resource value
+            /**
+             * @phpstan-ignore-next-line
+             */
             return $resolver;
         }
 

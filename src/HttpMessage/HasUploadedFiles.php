@@ -33,15 +33,15 @@ trait HasUploadedFiles
 
     /**
      * With uploaded files
-     * @param array<array-key, UploadedFileInterface> $uploaded_files
+     * @param array<array-key, mixed> $uploadedFiles
      * @return ServerRequestInterface
      * @throws InvalidArgumentException
      */
-    public function withUploadedFiles(array $uploaded_files): ServerRequestInterface
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         $new_instance = clone $this;
         $new_instance->uploaded_files = [];
-        foreach ($uploaded_files as $key => $uploaded_file) {
+        foreach ($uploadedFiles as $key => $uploaded_file) {
             if (!$uploaded_file instanceof UploadedFileInterface) {
                 throw new InvalidArgumentException('Invalid uploaded file');
             }

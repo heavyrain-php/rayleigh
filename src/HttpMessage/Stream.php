@@ -25,6 +25,7 @@ final class Stream implements StreamInterface
      * It can be null if the stream is detached.
      * WARNING: It is mutable
      * @var resource|null
+     * @psalm-var resource|closed-resource|null
      */
     private $stream = null;
 
@@ -98,6 +99,10 @@ final class Stream implements StreamInterface
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @psalm-return resource|closed-resource|null
+     */
     public function detach(): mixed
     {
         if (!isset($this->stream)) {

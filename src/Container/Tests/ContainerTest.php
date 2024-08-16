@@ -76,6 +76,7 @@ final class ContainerTest extends TestCase
 
         // Concrete object
         $container->bind('concrete object', $a = new \stdClass());
+        /** @phpstan-ignore-next-line */
         self::assertSame($a, $container->get('concrete object'));
         self::assertTrue($container->has('concrete object'));
         self::assertFalse($container->has('non-existing id'));
@@ -89,12 +90,14 @@ final class ContainerTest extends TestCase
             }
         });
         /** @var callable $callable */
+        /** @phpstan-ignore-next-line */
         $callable = $container->get('callable instance');
         self::assertSame('world', $callable());
 
         // Callable
-        $container->bind('callable', fn () => 'hello');
+        $container->bind('callable', fn() => 'hello');
         /** @var callable $callable2 */
+        /** @phpstan-ignore-next-line */
         $callable2 = $container->get('callable');
         self::assertSame('hello', $callable2());
 
@@ -116,6 +119,7 @@ final class ContainerTest extends TestCase
 
         // Scalar
         $container->bind('scalar', 4);
+        /** @phpstan-ignore-next-line */
         $scalar = $container->get('scalar');
         self::assertSame(4, $scalar);
     }
@@ -127,6 +131,7 @@ final class ContainerTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('id is not registered to container');
+        /** @phpstan-ignore-next-line */
         $container->get('id');
     }
 
@@ -135,15 +140,15 @@ final class ContainerTest extends TestCase
     {
         $container = new Container();
 
-        self::assertSame('hello', $container->call(fn () => 'hello'));
+        self::assertSame('hello', $container->call(fn() => 'hello'));
 
         $container->bind(ContainerInterface::class, $container);
 
-        self::assertFalse($container->call(fn (ContainerInterface $container): bool => $container->has('id')));
+        self::assertFalse($container->call(fn(ContainerInterface $container): bool => $container->has('id')));
 
         $container2 = new Container();
 
         // @phpstan-ignore return.type
-        self::assertSame($container2, $container->call(fn (ContainerInterface $container2): Container => $container2, compact('container2')));
+        self::assertSame($container2, $container->call(fn(ContainerInterface $container2): Container => $container2, compact('container2')));
     }
 }

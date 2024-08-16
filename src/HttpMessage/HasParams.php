@@ -46,7 +46,7 @@ trait HasParams
 
     /**
      * With cookie params
-     * @param array<string, mixed> $cookies
+     * @param array<array-key, mixed> $cookies
      * @return ServerRequestInterface
      */
     public function withCookieParams(array $cookies): ServerRequestInterface
