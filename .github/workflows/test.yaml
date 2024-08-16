@@ -53,6 +53,7 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: ${{ env.extensions }}
           coverage: pcov
+          tools: phive
         env:
           fail-fast: true
 
@@ -74,6 +75,9 @@ jobs:
           else
             composer update --prefer-stable --no-progress --ansi --prefer-dist
           fi
+
+      - name: Install phive tools
+        run: phive install --copy --trust-gpg-keys E82B2FB314E9906E,51C67305FFC2E5C0,12CE0F1D262429A5
 
       - name: Run PHPUnit
         run: composer test
