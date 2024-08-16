@@ -29,7 +29,7 @@
     "psr/http-client-implementation": "1.0.3"
   },
   "require": {
-    "php": "~8.1.0|~8.2.0|~8.3.0",
+    "php": "~8.2.0|~8.3.0",
     "psr/http-client": "^1.0.0",
     "rayleigh/http-message": "^0.0.3"
   },

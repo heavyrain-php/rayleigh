@@ -40,15 +40,18 @@
 
 ## Requirements
 
-- PHP ~8.1.0|~8.2.0|~8.3.0
+- PHP ~8.2.0|~8.3.0
 - No third-party requirements!(There is an adapter for these)
 
 ## Development
+
+- download [phive.phar](https://phar.io/)
 
 ```sh
 $ git clone https://github.com/heavyrain-php/rayleigh.git
 $ cd rayleigh
 $ composer install
+$ phive install
 $ composer lint
 $ composer test
 ```
