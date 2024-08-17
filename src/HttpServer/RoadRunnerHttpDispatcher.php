@@ -24,7 +24,7 @@ use Spiral\RoadRunner\Worker;
  * @package Rayleigh\HttpServer
  * @link https://docs.roadrunner.dev/docs/php-worker/worker
  */
-class HttpDispatcher
+class RoadRunnerHttpDispatcher
 {
     public function __construct()
     {
