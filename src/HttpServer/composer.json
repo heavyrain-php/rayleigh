@@ -35,10 +35,17 @@
     "psr/http-message": "^2.0.0",
     "psr/http-server-handler": "^1.0.0",
     "psr/http-server-middleware": "^1.0.0",
+    "psr/log": "^2.0.0|^3.0.0",
+    "rayleigh/http-factory": "^0.0.1",
     "rayleigh/http-message": "^0.0.1"
   },
-  "require-dev": {},
-  "suggest": {},
+  "require-dev": {
+    "spiral/roadrunner-http": "^3.5.0"
+  },
+  "suggest": {
+    "ext-protobuf": "With RoadRunner to huge performance improvement",
+    "spiral/roadrunner-http": "RoadRunner HTTP Server integration"
+  },
   "autoload": {
     "psr-4": {
       "Rayleigh\\HttpServer\\": ""

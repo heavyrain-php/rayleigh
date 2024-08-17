@@ -63,7 +63,8 @@
     "cakephp/chronos": "^3.0.0",
     "monolog/monolog": "^3.7.0",
     "nesbot/carbon": "^3.0.0",
-    "phpunit/phpunit": "^11.2.9"
+    "phpunit/phpunit": "^11.2.9",
+    "spiral/roadrunner-http": "^3.5.0"
   },
   "scripts": {
     "lint": [
