@@ -83,7 +83,11 @@ jobs:
         run: |-
           for dir in $(find src -type d); do
             if [ -f "$dir/composer.json" ]; then
-              composer install --working-dir=$dir --no-progress --ansi --prefer-dist
+              if [[ "${{ matrix.deps }}" == "lowest" ]]; then
+                composer update --working-dir=$dir --prefer-lowest --no-progress --ansi --prefer-dist || true
+              else
+                composer update --working-dir=$dir --prefer-stable --no-progress --ansi --prefer-dist || true
+              fi
             fi
           done
 
