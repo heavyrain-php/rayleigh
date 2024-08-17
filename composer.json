@@ -74,7 +74,8 @@
     "fix": "./tools/php-cs-fixer fix",
     "test": "phpunit",
     "coverage": "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-html=coverage",
-    "coverage-html": "php -S localhost:8080 -t coverage"
+    "coverage-html": "php -S localhost:8080 -t coverage",
+    "coverage-xml": "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml"
   },
   "prefer-stable": true,
   "config": {
