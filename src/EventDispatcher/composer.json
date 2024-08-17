@@ -2,7 +2,6 @@
   "$schema": "https://getcomposer.org/schema.json",
   "name": "rayleigh/event-dispatcher",
   "description": "S.S.S. Rayleigh Framework - EventDispatcher Component",
-  "version": "0.0.1",
   "type": "library",
   "keywords": [
     "rayleigh",

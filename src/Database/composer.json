@@ -2,7 +2,6 @@
   "$schema": "https://getcomposer.org/schema.json",
   "name": "rayleigh/database",
   "description": "S.S.S. Rayleigh Framework - Database Component",
-  "version": "0.0.1",
   "type": "library",
   "keywords": [
     "rayleigh",

@@ -2,7 +2,6 @@
   "$schema": "https://getcomposer.org/schema.json",
   "name": "rayleigh/idl-openapi",
   "description": "S.S.S. Rayleigh Framework - IDL OpenAPI Component",
-  "version": "0.0.1",
   "type": "library",
   "keywords": [
     "rayleigh",
