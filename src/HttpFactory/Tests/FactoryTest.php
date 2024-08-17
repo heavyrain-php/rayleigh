@@ -107,6 +107,7 @@ final class FactoryTest extends TestCase
     {
         $factory = new StreamFactory();
         $resource = \fopen(__FILE__, 'r');
+        \assert(\is_resource($resource));
         $stream = $factory->createStreamFromResource($resource);
 
         self::assertSame(\file_get_contents(__FILE__), (string) $stream);
