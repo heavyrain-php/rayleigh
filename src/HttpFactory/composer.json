@@ -31,7 +31,7 @@
   "require": {
     "php": "~8.2.0|~8.3.0",
     "psr/http-factory": "^1.0.0",
-    "rayleigh/http-message": "^0.0.3"
+    "rayleigh/http-message": "^0.0.1"
   },
   "require-dev": {},
   "suggest": {},
