@@ -1,0 +1,49 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "rayleigh/console",
+  "description": "S.S.S. Rayleigh Framework - Console Component",
+  "type": "library",
+  "keywords": [
+    "rayleigh",
+    "console",
+    "cli"
+  ],
+  "homepage": "https://heavyrain-php.github.io/rayleigh/",
+  "readme": "README.md",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Masaru Yamagishi",
+      "email": "akai_inu@live.jp",
+      "homepage": "https://cafe-capy.net",
+      "role": "Author"
+    }
+  ],
+  "support": {
+    "docs": "https://heavyrain-php.github.io/rayleigh/",
+    "issues": "https://github.com/heavyrain-php/rayleigh/issues",
+    "source": "https://github.com/heavyrain-php/rayleigh/"
+  },
+  "provide": {},
+  "require": {
+    "php": "~8.2.0|~8.3.0",
+    "psr/log": "^2.0.0|^3.0.0"
+  },
+  "require-dev": {},
+  "suggest": {},
+  "autoload": {
+    "psr-4": {
+      "Rayleigh\\Console\\": ""
+    },
+    "exclude-from-classmap": [
+      "*Test.php"
+    ]
+  },
+  "scripts": {},
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}

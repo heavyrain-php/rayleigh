@@ -22,13 +22,17 @@
   "replace": {
     "rayleigh/cache": "self.version",
     "rayleigh/clock": "self.version",
+    "rayleigh/config": "self.version",
+    "rayleigh/console": "self.version",
     "rayleigh/container": "self.version",
+    "rayleigh/contracts": "self.version",
     "rayleigh/database": "self.version",
     "rayleigh/event-dispatcher": "self.version",
     "rayleigh/http-client": "self.version",
     "rayleigh/http-factory": "self.version",
     "rayleigh/http-message": "self.version",
     "rayleigh/http-server": "self.version",
+    "rayleigh/idl-openapi": "self.version",
     "rayleigh/log": "self.version"
   },
   "authors": [
