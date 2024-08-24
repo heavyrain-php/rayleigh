@@ -57,7 +57,7 @@ final class ServerRequestRunnerTest extends TestCase
         $request2->expects(self::once())
             ->method('withAttribute')
             ->with('test1', 'test1')
-            ->willReturn($request3 = $this->createMock(ServerRequestInterface::class));
+            ->willReturn($this->createMock(ServerRequestInterface::class));
 
         $response1 = $this->createMock(ResponseInterface::class);
         $response1->expects(self::once())
@@ -70,14 +70,14 @@ final class ServerRequestRunnerTest extends TestCase
             ->with('X-Test', 'Test2')
             ->willReturn($response3 = $this->createMock(ResponseInterface::class));
 
-        $middleware1 = new class () implements MiddlewareInterface {
+        $middleware1 = new class implements MiddlewareInterface {
             public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
             {
                 $response = $handler->handle($request->withAttribute('test1', 'test1'));
                 return $response->withAddedHeader('X-Test', 'Test1');
             }
         };
-        $middleware2 = new class () implements MiddlewareInterface {
+        $middleware2 = new class implements MiddlewareInterface {
             public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
             {
                 $response = $handler->handle($request->withAttribute('test2', 'test2'));
@@ -105,9 +105,7 @@ final class ServerRequestRunnerTest extends TestCase
 
         $response = self::createStub(ResponseInterface::class);
         $handler = new class ($response) implements RequestHandlerInterface {
-            public function __construct(private readonly ResponseInterface $response)
-            {
-            }
+            public function __construct(private readonly ResponseInterface $response) {}
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
