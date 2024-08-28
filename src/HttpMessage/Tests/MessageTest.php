@@ -47,6 +47,17 @@ final class MessageTest extends TestCase
     }
 
     #[Test]
+    public function testInvalidProtocolVersion(): void
+    {
+        $message = new class extends Message {};
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid protocol version, "2" given');
+
+        $message->withProtocolVersion('2');
+    }
+
+    #[Test]
     public function testBody(): void
     {
         $message = new class extends Message {};

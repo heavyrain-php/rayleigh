@@ -5,7 +5,6 @@ declare(strict_types=1);
 /**
  * @author Masaru Yamagishi <akai_inu@live.jp>
  * @license Apache-2.0
- * @codeCoverageIgnoreFile because all of methods are wrapper of PHP built-in functions
  */
 
 namespace Rayleigh\HttpServer;
@@ -15,6 +14,7 @@ use Stringable;
 /**
  * Header and body emitter function wrapper
  * @package Rayleigh\HttpServer
+ * @codeCoverageIgnore because all of methods are wrapper of PHP built-in functions
  */
 /* final readonly */ class Emitter
 {

@@ -44,6 +44,7 @@ class Request extends Message implements RequestInterface
         // case-sensitive
         $this->method = $method;
         $this->uri = $uri instanceof UriInterface ? $uri : new Uri($uri);
+        $this->validateProtocolVersion($protocol_version);
         $this->protocol_version = $protocol_version;
         if ($body !== null && $body !== '') {
             $this->body = new Stream($body);

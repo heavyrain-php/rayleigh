@@ -17,7 +17,7 @@ use Psr\Http\Message\RequestInterface;
  */
 trait HasMethod
 {
-    protected string $method = 'GET';
+    protected string $method = 'GET'; // default
 
     public function getMethod(): string
     {
@@ -27,6 +27,7 @@ trait HasMethod
     public function withMethod(string $method): RequestInterface
     {
         $new_instance = clone $this;
+        // This should not modify the case of the method
         $new_instance->method = $method;
 
         return $new_instance;

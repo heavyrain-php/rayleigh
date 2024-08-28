@@ -146,7 +146,6 @@ final class ServerRequestTest extends TestCase
 
         $this->expectExceptionMessage('Invalid uploaded file');
 
-        // @phpstan-ignore argument.type
         new ServerRequest(method: 'GET', uploaded_files: ['a.txt' => $file]);
     }
 

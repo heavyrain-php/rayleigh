@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phive xmlns="https://phar.io/phive">
-  <phar name="friendsofphp/php-cs-fixer" version="^3.62.0" installed="3.62.0" location="./tools/php-cs-fixer" copy="false"/>
-  <phar name="phpstan/phpstan" version="^1.11.10" installed="1.11.10" location="./tools/phpstan" copy="false"/>
+  <phar name="friendsofphp/php-cs-fixer" version="^3.62.0" installed="3.63.1" location="./tools/php-cs-fixer" copy="false"/>
+  <phar name="phpstan/phpstan" version="^1.11.10" installed="1.12.0" location="./tools/phpstan" copy="false"/>
   <phar name="vimeo/psalm" version="^5.25.0" installed="5.25.0" location="./tools/psalm" copy="false"/>
 </phive>

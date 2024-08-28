@@ -19,12 +19,12 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 trait HasUploadedFiles
 {
-    /** @var array<array-key, UploadedFileInterface> $uploaded_files */
+    /** @var array<string, mixed> $uploaded_files */
     protected array $uploaded_files = [];
 
     /**
      * Get uploaded files
-     * @return array<array-key, UploadedFileInterface>
+     * @return array<array-key, mixed>
      */
     public function getUploadedFiles(): array
     {
@@ -41,13 +41,20 @@ trait HasUploadedFiles
     {
         $new_instance = clone $this;
         $new_instance->uploaded_files = [];
-        foreach ($uploadedFiles as $key => $uploaded_file) {
-            if (!$uploaded_file instanceof UploadedFileInterface) {
-                throw new InvalidArgumentException('Invalid uploaded file');
-            }
-            $new_instance->uploaded_files[$key] = $uploaded_file;
-        }
+        $this->validateUploadedFiles($uploadedFiles);
+        $new_instance->uploaded_files = $uploadedFiles;
 
         return $new_instance;
+    }
+
+    protected function validateUploadedFiles(mixed $uploaded_files): void
+    {
+        if (\is_array($uploaded_files)) {
+            foreach ($uploaded_files as $uploaded_file) {
+                $this->validateUploadedFiles($uploaded_file);
+            }
+        } elseif ($uploaded_files instanceof UploadedFileInterface === false) {
+            throw new InvalidArgumentException('Invalid uploaded file');
+        }
     }
 }

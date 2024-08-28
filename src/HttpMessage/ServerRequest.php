@@ -12,7 +12,6 @@ namespace Rayleigh\HttpMessage;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -34,9 +33,9 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param StreamInterface|resource|string|null $body
      * @param string $protocol_version
      * @param array<string, mixed> $server_params
-     * @param array<string, string> $cookie_params
+     * @param array<string, mixed> $cookie_params
      * @param array<array-key, mixed> $query_params
-     * @param array<string, UploadedFileInterface> $uploaded_files
+     * @param array<string, mixed> $uploaded_files
      * @param array<array-key, mixed>|object|null $parsed_body
      * @param array<array-key, mixed> $attributes
      * @throws InvalidArgumentException
@@ -74,12 +73,8 @@ class ServerRequest extends Request implements ServerRequestInterface
                 $this->query_params[$name] = $value;
             }
         }
-        foreach ($uploaded_files as $name => $uploaded_file) {
-            if (!$uploaded_file instanceof UploadedFileInterface) {
-                throw new InvalidArgumentException('Invalid uploaded file');
-            }
-            $this->uploaded_files[$name] = $uploaded_file;
-        }
+        $this->validateUploadedFiles($uploaded_files);
+        $this->uploaded_files = $uploaded_files;
         $this->parsed_body = $parsed_body;
         $this->attributes = $attributes;
     }
