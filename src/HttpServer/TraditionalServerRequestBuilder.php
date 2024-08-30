@@ -11,11 +11,8 @@ namespace Rayleigh\HttpServer;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Psr\Http\Message\UriInterface;
-use Rayleigh\HttpMessage\MalformedUriException;
 use Rayleigh\HttpMessage\ServerRequest;
 use Rayleigh\HttpMessage\UploadedFile;
-use Rayleigh\HttpMessage\Uri;
 use RuntimeException;
 
 /**
@@ -45,7 +42,6 @@ use RuntimeException;
      * @param array<non-empty-string, mixed> $files
      * @param array<non-empty-string, mixed> $get
      * @param array<non-empty-string, mixed> $post
-     * @param array<non-empty-string, mixed> $request
      */
     protected function __construct(
         protected array $server,
@@ -53,7 +49,6 @@ use RuntimeException;
         protected array $files,
         protected array $get,
         protected array $post,
-        protected array $request,
     ) {}
 
     /**
@@ -69,7 +64,6 @@ use RuntimeException;
             $_FILES,
             $_GET,
             $_POST,
-            $_REQUEST,
         );
     }
 
@@ -83,13 +77,21 @@ use RuntimeException;
     }
 
     /**
+     * Disable override method from Header or form
+     * @return void
+     */
+    public static function disableOverrideMethod(): void
+    {
+        self::$override_method = false;
+    }
+
+    /**
      * Build ServerRequest from provided variables
      * @param array<array-key, mixed> $server
      * @param array<array-key, mixed> $cookie
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $get
      * @param array<array-key, mixed> $post
-     * @param array<array-key, mixed> $request
      * @return ServerRequestInterface
      */
     public static function build(
@@ -98,7 +100,6 @@ use RuntimeException;
         array $files,
         array $get,
         array $post,
-        array $request,
     ): ServerRequestInterface {
         $builder = new self(
             self::normalizeKey($server),
@@ -106,7 +107,6 @@ use RuntimeException;
             self::normalizeKey($files),
             self::normalizeKey($get),
             self::normalizeKey($post),
-            self::normalizeKey($request),
         );
         $method = $builder->buildMethod();
         $overrided_method = $builder->buildOverrideMethod();
@@ -115,19 +115,18 @@ use RuntimeException;
         }
         self::$override_method = false; // reset
         $builder->normalizeByMethod($method);
-        $protocol_version = $builder->buildProtocolVersion();
 
         return new ServerRequest(
             method: $method,
-            uri: self::generateUri($server),
+            uri: $builder->buildUri(),
             headers: $builder->buildHeaders(),
             body: self::generateBody($method),
-            protocol_version: $protocol_version,
+            protocol_version: $builder->buildProtocolVersion(),
             server_params: $builder->server,
             cookie_params: $builder->cookie,
             query_params: $builder->get,
             uploaded_files: $builder->buildUploadedFiles(),
-            parsed_body: null, // default null
+            parsed_body: $builder->buildParsedBody($method),
             attributes: [], // default empty
         );
     }
@@ -142,7 +141,7 @@ use RuntimeException;
         $request_method = self::findStringFromArray($this->server, 'REQUEST_METHOD');
 
         if (\is_null($request_method)) {
-            return 'GET'; // @codeCoverageIgnore default
+            return 'GET'; // @codeCoverageIgnore
         }
 
         return $request_method;
@@ -326,6 +325,101 @@ use RuntimeException;
         return $normalized;
     }
 
+    /**
+     * Build URI string
+     * Validation will be performed in the Uri instance constructor
+     * @return string
+     */
+    public function buildUri(): string
+    {
+        $uri_string = $this->isHttps() ? 'https://' : 'http://';
+
+        $uri_string .= $this->getUserAndPass();
+        $uri_string .= $this->getHostAndPort();
+
+        if (\array_key_exists('REQUEST_URI', $this->server)) {
+            $uri_string .= $this->server['REQUEST_URI'];
+        }
+
+        return $uri_string;
+    }
+
+    private function isHttps(): bool
+    {
+        $https = $this->server['HTTPS'] ?? $this->server['https'] ?? '';
+        if (\is_string($https) && $https !== '') {
+            return ($https === 'on' || $https === '1' || $https === 'true');
+        }
+        if (\array_key_exists('HTTP_X_FORWARDED_PROTO', $this->server) === false) {
+            return false;
+        }
+        $forwarded = $this->server['HTTP_X_FORWARDED_PROTO'];
+        \assert(\is_string($forwarded));
+        return \strtolower($forwarded) === 'https';
+    }
+
+    private function getUserAndPass(): string
+    {
+        $user = $this->server['PHP_AUTH_USER'] ?? null;
+        $pass = $this->server['PHP_AUTH_PASS'] ?? $this->server['PHP_AUTH_PW'] ?? null;
+        if (\is_string($user) && (\is_string($pass) || $pass === null)) {
+            return $user . ':' . $pass . '@';
+        }
+        return '';
+    }
+
+    private function getHostAndPort(): string
+    {
+        if (\array_key_exists('HTTP_HOST', $this->server) && \is_string($this->server['HTTP_HOST'])) {
+            return $this->server['HTTP_HOST'];
+        }
+        if (\array_key_exists('SERVER_NAME', $this->server) && \array_key_exists('SERVER_PORT', $this->server)) {
+            return $this->server['SERVER_NAME'] . ':' . $this->server['SERVER_PORT'];
+        }
+        return 'localhost';
+    }
+
+    /**
+     * Build parsed body
+     * @param string $method
+     * @return array<array-key, mixed>|object|null
+     */
+    public function buildParsedBody(string $method): array|object|null
+    {
+        if (\in_array(\strtoupper($method), ['POST', 'PUT', 'DELETE', 'PATCH'], true) === false) {
+            // has no body
+            return null;
+        }
+
+        if (\array_key_exists('CONTENT_TYPE', $this->server) === false) {
+            return null;
+        }
+        $content_type = $this->server['CONTENT_TYPE'];
+        \assert(\is_string($content_type));
+
+        if (\str_starts_with($content_type, 'application/x-www-form-urlencoded')) {
+            return $this->post;
+        }
+
+        if (\preg_match('/^application\/([^\+]*)\+?json/', $content_type)) {
+            $body = @\file_get_contents('php://input');
+            if ($body === false) {
+                return null; // @codeCoverageIgnore
+            }
+            $json = @\json_decode($body, true);
+            if (\is_array($json)) {
+                return $json; // @codeCoverageIgnore
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalize superglobals by method
+     * @param string $method
+     * @return void
+     */
     private function normalizeByMethod(string $method): void
     {
         switch (\strtoupper($method)) {
@@ -340,7 +434,6 @@ use RuntimeException;
                 break; // Do nothing
             default:
                 $this->post = []; // clear post
-                $this->request = []; // clear request
                 break;
         }
     }
@@ -381,52 +474,6 @@ use RuntimeException;
             }
         }
         return null;
-    }
-
-    /**
-     * @param array<string, mixed> $server
-     * @return UriInterface
-     * @throws MalformedUriException
-     * @link http://www.faqs.org/rfcs/rfc3875.html
-     */
-    private static function generateUri(array $server): UriInterface
-    {
-        $uri = new Uri();
-        $server_protocol = $server['SERVER_PROTOCOL'] ?? '';
-        $https = $server['HTTPS'] ?? $server['https'] ?? '';
-        if (\is_string($https) && $https !== 'off') {
-            $uri = $uri->withScheme('https');
-        } elseif (\is_string($server_protocol)) {
-            if (\str_starts_with($server_protocol, 'HTTP/')) {
-                $uri = $uri->withScheme('http');
-            }
-        }
-        $user = $server['PHP_AUTH_USER'] ?? null;
-        $pass = $server['PHP_AUTH_PASS'] ?? $server['PHP_AUTH_PW'] ?? null;
-        if (\is_string($user) && (\is_string($pass) || $pass === null)) {
-            $uri = $uri->withUserInfo($user, $pass);
-        }
-        if (\array_key_exists('SERVER_NAME', $server) && \is_string($server['SERVER_NAME'])) {
-            $uri = $uri->withHost((string)$server['SERVER_NAME']);
-        } else {
-            $uri = $uri->withHost('localhost');
-        }
-        if (\array_key_exists('SERVER_PORT', $server) && \is_numeric($server['SERVER_PORT'])) {
-            $uri = $uri->withPort((int)$server['SERVER_PORT']);
-        } else {
-            $uri = $uri->withPort($uri->getScheme() === 'https' ? 443 : 80);
-        }
-        if (\array_key_exists('SCRIPT_NAME', $server) && \is_string($server['SCRIPT_NAME'])) {
-            $uri = $uri->withPath((string)$server['SCRIPT_NAME']);
-        } else {
-            $uri = $uri->withPath('/');
-        }
-        if (\array_key_exists('QUERY_STRING', $server) && \is_string($server['QUERY_STRING'])) {
-            $uri = $uri->withQuery((string)$server['QUERY_STRING']);
-        } else {
-            $uri = $uri->withQuery('');
-        }
-        return $uri;
     }
 
     /**

@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesTrait;
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -31,6 +32,7 @@ use Rayleigh\HttpServer\TraditionalServerRequestBuilder;
 #[UsesClass(\Rayleigh\HttpMessage\Message::class)]
 #[UsesClass(\Rayleigh\HttpMessage\Request::class)]
 #[UsesClass(\Rayleigh\HttpMessage\ServerRequest::class)]
+#[UsesClass(\Rayleigh\HttpMessage\Stream::class)]
 #[UsesClass(\Rayleigh\HttpMessage\UploadedFile::class)]
 #[UsesClass(\Rayleigh\HttpMessage\Uri::class)]
 final class TraditionalServerRequestBuilderTest extends TestCase
@@ -79,11 +81,10 @@ final class TraditionalServerRequestBuilderTest extends TestCase
             'test' => 'foo',
         ];
         $POST = [];
-        $REQUEST = [
-            'test' => 'foo',
-        ];
 
-        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST, $REQUEST);
+        TraditionalServerRequestBuilder::disableOverrideMethod();
+        TraditionalServerRequestBuilder::enableOverrideMethod();
+        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST);
 
         self::assertInstanceOf(ServerRequestInterface::class, $request);
         self::assertSame('GET', $request->getMethod());
@@ -152,12 +153,8 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
             'test' => 'foo',
         ];
         $POST = [];
-        $REQUEST = [
-            'test' => 'foo',
-            'PHPSESSID' => 'ra3rpdd1aba6tglm2q70mbb29f',
-        ];
 
-        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST, $REQUEST);
+        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST);
 
         self::assertInstanceOf(ServerRequestInterface::class, $request);
         self::assertSame('GET', $request->getMethod());
@@ -165,6 +162,257 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
         self::assertSame([], $request->getUploadedFiles());
         self::assertNull($request->getParsedBody());
         self::assertSame(['test' => 'foo'], $request->getQueryParams());
+        self::assertSame('1.1', $request->getProtocolVersion());
+        self::assertSame([], $request->getAttributes());
+    }
+
+    public function testApacheRewrited(): void
+    {
+        $SERVER = [
+            'REDIRECT_HTTP_AUTHORIZATION' => 'Basic Zm9vOmJhcg==',
+            'REDIRECT_STATUS' => '200',
+            'HTTP_AUTHORIZATION' => 'Basic Zm9vOmJhcg==',
+            'HTTP_HOST' => 'localhost:8081',
+            'HTTP_CONNECTION' => 'keep-alive',
+            'HTTP_CACHE_CONTROL' => 'max-age=0',
+            'HTTP_SEC_CH_UA' => '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+            'HTTP_SEC_CH_UA_MOBILE' => '?0',
+            'HTTP_SEC_CH_UA_PLATFORM' => '"Windows"',
+            'HTTP_UPGRADE_INSECURE_REQUESTS' => '1',
+            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'HTTP_SEC_FETCH_SITE' => 'none',
+            'HTTP_SEC_FETCH_MODE' => 'navigate',
+            'HTTP_SEC_FETCH_USER' => '?1',
+            'HTTP_SEC_FETCH_DEST' => 'document',
+            'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, br, zstd',
+            'HTTP_ACCEPT_LANGUAGE' => 'ja,en-US;q=0.9,en;q=0.8',
+            'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+            'SERVER_SIGNATURE' => '
+Apache/2.4.61 (Debian) Server at localhost Port 8081
+
+',
+            'SERVER_SOFTWARE' => 'Apache/2.4.61 (Debian)',
+            'SERVER_NAME' => 'localhost',
+            'SERVER_ADDR' => '172.17.0.2',
+            'SERVER_PORT' => '8081',
+            'REMOTE_ADDR' => '172.17.0.1',
+            'DOCUMENT_ROOT' => '/var/www/html',
+            'REQUEST_SCHEME' => 'http',
+            'CONTEXT_PREFIX' => '',
+            'CONTEXT_DOCUMENT_ROOT' => '/var/www/html',
+            'SERVER_ADMIN' => 'webmaster@localhost',
+            'SCRIPT_FILENAME' => '/var/www/html/index.php',
+            'REMOTE_PORT' => '34738',
+            'REMOTE_USER' => 'foo',
+            'AUTH_TYPE' => 'Basic',
+            'REDIRECT_URL' => '/test/a/b/foo/bar',
+            'REDIRECT_QUERY_STRING' => 'a=b&c',
+            'GATEWAY_INTERFACE' => 'CGI/1.1',
+            'SERVER_PROTOCOL' => 'HTTP/1.1',
+            'REQUEST_METHOD' => 'GET',
+            'QUERY_STRING' => 'a=b&c',
+            'REQUEST_URI' => '/test/a/b/foo/bar?a=b&c',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
+            'PHP_AUTH_USER' => 'foo',
+            'PHP_AUTH_PW' => 'bar',
+            'REQUEST_TIME_FLOAT' => 1724993327.359642,
+            'REQUEST_TIME' => 1724993327,
+            'argv' => [
+                0 => 'a=b&c',
+            ],
+            'argc' => 1,
+        ];
+        $COOKIE = [
+        ];
+        $FILES = [];
+        $GET = [
+            'a' => 'b',
+            'c' => '',
+        ];
+        $POST = [];
+
+        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST);
+
+        self::assertInstanceOf(ServerRequestInterface::class, $request);
+        self::assertSame('GET', $request->getMethod());
+        self::assertSame([], $request->getCookieParams());
+        self::assertSame([], $request->getUploadedFiles());
+        self::assertNull($request->getParsedBody());
+        self::assertSame(['a' => 'b', 'c' => ''], $request->getQueryParams());
+        self::assertSame('1.1', $request->getProtocolVersion());
+        self::assertSame([], $request->getAttributes());
+    }
+
+    public function testThroughNgrokWithApache(): void
+    {
+        $SERVER = [
+            'HTTP_HOST' => '7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app',
+            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, br, zstd',
+            'HTTP_ACCEPT_LANGUAGE' => 'ja,en-US;q=0.9,en;q=0.8',
+            'HTTP_CACHE_CONTROL' => 'max-age=0',
+            'HTTP_COOKIE' => 'abuse_interstitial=7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app',
+            'HTTP_PRIORITY' => 'u=0, i',
+            'HTTP_SEC_CH_UA' => '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+            'HTTP_SEC_CH_UA_MOBILE' => '?0',
+            'HTTP_SEC_CH_UA_PLATFORM' => '"Windows"',
+            'HTTP_SEC_FETCH_DEST' => 'document',
+            'HTTP_SEC_FETCH_MODE' => 'navigate',
+            'HTTP_SEC_FETCH_SITE' => 'none',
+            'HTTP_SEC_FETCH_USER' => '?1',
+            'HTTP_UPGRADE_INSECURE_REQUESTS' => '1',
+            'HTTP_X_FORWARDED_FOR' => '2404:7a83:8a00:c700:eced:aaa1:902b:5fc4',
+            'HTTP_X_FORWARDED_HOST' => '7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app',
+            'HTTP_X_FORWARDED_PROTO' => 'https',
+            'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+            'SERVER_SIGNATURE' => '
+Apache/2.4.61 (Debian) Server at 7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app Port 80
+
+',
+            'SERVER_SOFTWARE' => 'Apache/2.4.61 (Debian)',
+            'SERVER_NAME' => '7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app',
+            'SERVER_ADDR' => '172.17.0.2',
+            'SERVER_PORT' => '80',
+            'REMOTE_ADDR' => '172.17.0.1',
+            'DOCUMENT_ROOT' => '/var/www/html',
+            'REQUEST_SCHEME' => 'http',
+            'CONTEXT_PREFIX' => '',
+            'CONTEXT_DOCUMENT_ROOT' => '/var/www/html',
+            'SERVER_ADMIN' => 'webmaster@localhost',
+            'SCRIPT_FILENAME' => '/var/www/html/index.php',
+            'REMOTE_PORT' => '37830',
+            'GATEWAY_INTERFACE' => 'CGI/1.1',
+            'SERVER_PROTOCOL' => 'HTTP/1.1',
+            'REQUEST_METHOD' => 'GET',
+            'QUERY_STRING' => '',
+            'REQUEST_URI' => '/',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_TIME_FLOAT' => 1724994137.617278,
+            'REQUEST_TIME' => 1724994137,
+            'argv' => [],
+            'argc' => 0,
+        ];
+        $COOKIE = [
+            'abuse_interstitial' => '7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app',
+        ];
+        $FILES = [];
+        $GET = [];
+        $POST = [];
+
+        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST);
+
+        self::assertInstanceOf(ServerRequestInterface::class, $request);
+        self::assertSame('GET', $request->getMethod());
+        self::assertSame(['abuse_interstitial' => '7dff-2404-7a83-8a00-c700-eced-aaa1-902b-5fc4.ngrok-free.app'], $request->getCookieParams());
+        self::assertSame([], $request->getUploadedFiles());
+        self::assertNull($request->getParsedBody());
+        self::assertSame([], $request->getQueryParams());
+        self::assertSame('1.1', $request->getProtocolVersion());
+        self::assertSame([], $request->getAttributes());
+    }
+
+    public function testCurlPost(): void
+    {
+        $SERVER = [
+            'HTTP_HOST' => 'localhost:8081',
+            'HTTP_USER_AGENT' => 'curl/8.5.0',
+            'HTTP_ACCEPT' => '*/*',
+            'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+            'SERVER_SIGNATURE' => '<address>Apache/2.4.61 (Debian) Server at localhost Port 8081</address>
+        ',
+            'SERVER_SOFTWARE' => 'Apache/2.4.61 (Debian)',
+            'SERVER_NAME' => 'localhost',
+            'SERVER_ADDR' => '172.17.0.2',
+            'SERVER_PORT' => '8081',
+            'REMOTE_ADDR' => '172.17.0.1',
+            'DOCUMENT_ROOT' => '/var/www/html',
+            'REQUEST_SCHEME' => 'http',
+            'CONTEXT_PREFIX' => '',
+            'CONTEXT_DOCUMENT_ROOT' => '/var/www/html',
+            'SERVER_ADMIN' => 'webmaster@localhost',
+            'SCRIPT_FILENAME' => '/var/www/html/index.php',
+            'REMOTE_PORT' => '47824',
+            'GATEWAY_INTERFACE' => 'CGI/1.1',
+            'SERVER_PROTOCOL' => 'HTTP/1.1',
+            'REQUEST_METHOD' => 'POST',
+            'QUERY_STRING' => '',
+            'REQUEST_URI' => '/',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_TIME_FLOAT' => 1724996376.535533,
+            'REQUEST_TIME' => 1724996376,
+            'argv' => [],
+            'argc' => 0,
+        ];
+        $COOKIE = [];
+        $FILES = [];
+        $GET = [];
+        $POST = [];
+
+        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST);
+
+        self::assertInstanceOf(ServerRequestInterface::class, $request);
+        self::assertSame('POST', $request->getMethod());
+        self::assertSame([], $request->getCookieParams());
+        self::assertSame([], $request->getUploadedFiles());
+        self::assertSame([], $request->getParsedBody());
+        self::assertSame([], $request->getQueryParams());
+        self::assertSame('1.1', $request->getProtocolVersion());
+        self::assertSame([], $request->getAttributes());
+    }
+
+    public function testCurl(): void
+    {
+        $SERVER = [
+            'HTTP_HOST' => 'localhost:8081',
+            'HTTP_USER_AGENT' => 'curl/8.5.0',
+            'HTTP_ACCEPT' => '*/*',
+            'PATH' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+            'SERVER_SIGNATURE' => '<address>Apache/2.4.61 (Debian) Server at localhost Port 8081</address>
+        ',
+            'SERVER_SOFTWARE' => 'Apache/2.4.61 (Debian)',
+            'SERVER_NAME' => 'localhost',
+            'SERVER_ADDR' => '172.17.0.2',
+            'SERVER_PORT' => '8081',
+            'REMOTE_ADDR' => '172.17.0.1',
+            'DOCUMENT_ROOT' => '/var/www/html',
+            'REQUEST_SCHEME' => 'http',
+            'CONTEXT_PREFIX' => '',
+            'CONTEXT_DOCUMENT_ROOT' => '/var/www/html',
+            'SERVER_ADMIN' => 'webmaster@localhost',
+            'SCRIPT_FILENAME' => '/var/www/html/index.php',
+            'REMOTE_PORT' => '47824',
+            'GATEWAY_INTERFACE' => 'CGI/1.1',
+            'SERVER_PROTOCOL' => 'HTTP/1.1',
+            'REQUEST_METHOD' => 'PATCH',
+            'QUERY_STRING' => '',
+            'REQUEST_URI' => '/',
+            'SCRIPT_NAME' => '/index.php',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_TIME_FLOAT' => 1724996376.535533,
+            'REQUEST_TIME' => 1724996376,
+            'argv' => [],
+            'argc' => 0,
+            '' => 'empty key',
+            1 => 'numeric key',
+        ];
+        $COOKIE = [];
+        $FILES = [];
+        $GET = [];
+        $POST = [];
+
+        $request = TraditionalServerRequestBuilder::build($SERVER, $COOKIE, $FILES, $GET, $POST);
+
+        self::assertInstanceOf(ServerRequestInterface::class, $request);
+        self::assertSame('PATCH', $request->getMethod());
+        self::assertSame([], $request->getCookieParams());
+        self::assertSame([], $request->getUploadedFiles());
+        self::assertNull($request->getParsedBody());
+        self::assertSame([], $request->getQueryParams());
         self::assertSame('1.1', $request->getProtocolVersion());
         self::assertSame([], $request->getAttributes());
     }
@@ -210,7 +458,6 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
             [],
             [],
             $post,
-            $post,
         );
 
         $actual = $builder->buildMethod();
@@ -234,7 +481,6 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
             [],
             [],
             [],
-            $post,
             $post,
         );
 
@@ -260,7 +506,6 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
             [],
             $get,
             [],
-            $get,
         );
 
         $actual = $builder->buildOverrideMethod();
@@ -477,12 +722,81 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
     }
 
     /**
+     * @return iterable <string, mixed>
+     */
+    public static function getUri(): iterable
+    {
+        yield 'localhost' => [['HTTP_HOST' => 'localhost', 'REQUEST_URI' => '/index.php?a=b'], 'http://localhost/index.php?a=b'];
+
+        yield 'https' => [['HTTP_HOST' => 'localhost', 'REQUEST_URI' => '/index.php?a=b', 'HTTPS' => 'on'], 'https://localhost/index.php?a=b'];
+
+        yield 'https_forwarded' => [['HTTP_X_FORWARDED_PROTO' => 'https', 'HTTP_HOST' => 'localhost', 'REQUEST_URI' => '/index.php?a=b'], 'https://localhost/index.php?a=b'];
+
+        yield 'user_and_pass' => [['HTTP_HOST' => 'localhost', 'REQUEST_URI' => '/index.php?a=b', 'PHP_AUTH_USER' => 'foo', 'PHP_AUTH_PW' => 'bar'], 'http://foo:bar@localhost/index.php?a=b'];
+
+        yield 'no_host' => [['SERVER_NAME' => 'localhost', 'SERVER_PORT' => '8080'], 'http://localhost:8080'];
+
+        yield 'no_server' => [[], 'http://localhost'];
+    }
+
+    /**
+     * @param array<non-empty-string, string> $server
+     * @param string $expected
+     * @return void
+     */
+    #[Test]
+    #[DataProvider('getUri')]
+    public function testBuildUri(array $server, string $expected): void
+    {
+        $builder = self::getExtendedBuilder(
+            $server,
+        );
+
+        $actual = $builder->buildUri();
+
+        self::assertSame($expected, $actual);
+    }
+
+    /**
+     * @return iterable<string, mixed>
+     */
+    public static function getParsedBody(): iterable
+    {
+        yield 'GET' => ['GET', [], [], null];
+
+        yield 'POST' => ['POST', ['CONTENT_TYPE' => 'application/x-www-form-urlencoded'], ['a' => 'b'], ['a' => 'b']];
+
+        yield 'json' => ['POST', ['CONTENT_TYPE' => 'application/json'], [], null];
+    }
+
+    /**
+     * @param string $method
+     * @param array<non-empty-string, mixed> $server
+     * @param array<non-empty-string, mixed> $post
+     * @param mixed $expected
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    #[Test]
+    #[DataProvider('getParsedBody')]
+    public function testBuildParsedBody(string $method, array $server, array $post, mixed $expected): void
+    {
+        $builder = self::getExtendedBuilder(
+            server: $server,
+            post: $post,
+        );
+
+        $actual = $builder->buildParsedBody($method);
+
+        self::assertSame($expected, $actual);
+    }
+
+    /**
      * @param array<non-empty-string, mixed> $server
      * @param array<non-empty-string, mixed> $cookie
      * @param array<non-empty-string, mixed> $files
      * @param array<non-empty-string, mixed> $get
      * @param array<non-empty-string, mixed> $post
-     * @param array<non-empty-string, mixed> $request
      */
     private static function getExtendedBuilder(
         array $server = [],
@@ -490,18 +804,15 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
         array $files = [],
         array $get = [],
         array $post = [],
-        array $request = [],
-    ): TraditionalServerRequestBuilder
-    {
+    ): TraditionalServerRequestBuilder {
         // use anonymous class for public constructor
-        return new class ($server, $cookie, $files, $get, $post, $request) extends TraditionalServerRequestBuilder {
+        return new class ($server, $cookie, $files, $get, $post) extends TraditionalServerRequestBuilder {
             /**
              * @param array<non-empty-string, mixed> $server
              * @param array<non-empty-string, mixed> $cookie
              * @param array<non-empty-string, mixed> $files
              * @param array<non-empty-string, mixed> $get
              * @param array<non-empty-string, mixed> $post
-             * @param array<non-empty-string, mixed> $request
              */
             public function __construct(
                 array $server,
@@ -509,9 +820,8 @@ Apache/2.4.61 (Debian) Server at localhost Port 8080
                 array $files,
                 array $get,
                 array $post,
-                array $request,
-            ){
-                parent::__construct($server, $cookie, $files, $get, $post, $request);
+            ) {
+                parent::__construct($server, $cookie, $files, $get, $post);
             }
         };
     }
