@@ -74,7 +74,8 @@ final class RoutingHandlerTest extends TestCase
         $routes = $handler->getRoutes();
 
         self::assertCount(2, $routes);
-        self::assertCount(7, $routes['/']);;
+        self::assertCount(7, $routes['/']);
+        ;
         self::assertCount(1, $routes['*']);
     }
 
@@ -144,9 +145,7 @@ final class RoutingHandlerTest extends TestCase
         $handler->post('/posts', $stubPost);
 
         $mockGet = new class ($expected = $this->createMock(ResponseInterface::class)) implements RequestHandlerInterface {
-            public function __construct(private ResponseInterface $expected)
-            {
-            }
+            public function __construct(private ResponseInterface $expected) {}
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 if ($request->getAttribute('user_id') !== '1') {

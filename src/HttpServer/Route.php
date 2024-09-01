@@ -15,6 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Route information
  * @package Rayleigh\HttpServer
+ * @psalm-suppress PossiblyUnusedProperty
  */
 final /* readonly */ class Route
 {
