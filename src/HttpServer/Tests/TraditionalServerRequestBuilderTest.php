@@ -20,6 +20,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Rayleigh\HttpServer\TraditionalServerRequestBuilder;
 
+/**
+ * Class TraditionalServerRequestBuilderTest
+ * @package Rayleigh\HttpServer\Tests
+ */
 #[CoversClass(TraditionalServerRequestBuilder::class)]
 #[UsesTrait(\Rayleigh\HttpMessage\HasAttributes::class)]
 #[UsesTrait(\Rayleigh\HttpMessage\HasMethod::class)]

@@ -23,6 +23,7 @@ use Spiral\RoadRunner\Worker;
  * RoadRunner HTTP Dispatcher
  * @package Rayleigh\HttpServer
  * @link https://docs.roadrunner.dev/docs/php-worker/worker
+ * @codeCoverageIgnore
  */
 class RoadRunnerHttpDispatcher
 {

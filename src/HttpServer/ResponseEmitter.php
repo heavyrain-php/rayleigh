@@ -71,7 +71,7 @@ final /* readonly */ class ResponseEmitter
         $informational_response = $status_code >= 100 && $status_code < 200;
         if ($informational_response && \function_exists('headers_sent') === false) {
             // Skip when SAPI does not support headers_sent
-            return;
+            return; // @codeCoverageIgnore
         }
 
         /** @var string $name Fixes PSR-7 definition */
